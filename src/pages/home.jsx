@@ -153,60 +153,71 @@ const App = () => {
           </section>
 
       {/* Contact Section - Unchanged */}
-      <section className="p-8 md:p-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold">Let's talk with us</h2>
-          <p className="text-gray-600">
-            Questions, comments, or suggestions? Simply fill in the form and we'll be in touch shortly.
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <MapPin className="text-purple-500" />
-              <span>1055 Arthur ave Elk Grove, 67. Kigali City Remera Sector.</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="text-purple-500" />
-              <span>+250 678 9108 99</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Mail className="text-purple-500" />
-              <span>Contact@moralizer.com</span>
-            </div>
-          </div>
-        </div>
-        <form className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="John"
-              className="border p-2 rounded-md"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="border p-2 rounded-md"
-            />
-          </div>
-          <input
-            type="email"
-            placeholder="Email"
-            className="border p-2 rounded-md w-full"
-          />
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            className="border p-2 rounded-md w-full"
-          />
-          <textarea
-            placeholder="Your Message..."
-            className="border p-2 rounded-md w-full h-32"
-          />
-          <button className="bg-green-500 text-white w-full py-3 rounded-md hover:bg-green-600">
-            Send Message
-          </button>
-        </form>
-      </section>
-
+      <section className="bg-white py-16">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="bg-gray-50 rounded-2xl shadow-lg p-8 md:p-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div className="space-y-6">
+                                <h2 className="text-3xl font-bold text-gray-900">Let's talk with us</h2>
+                                <p className="text-gray-600">
+                                    Questions, comments, or suggestions? Simply fill in the form and we'll be in touch shortly.
+                                </p>
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-green-100 p-3 rounded-full">
+                                            <MapPin className="text-green-500 w-5 h-5" />
+                                        </div>
+                                        <span className="text-gray-700">1055 Arthur ave Elk Grove, 67. Kigali City Remera Sector.</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-green-100 p-3 rounded-full">
+                                            <Phone className="text-green-500 w-5 h-5" />
+                                        </div>
+                                        <span className="text-gray-700">+250 678 9108 99</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-green-100 p-3 rounded-full">
+                                            <Mail className="text-green-500 w-5 h-5" />
+                                        </div>
+                                        <span className="text-gray-700">Contact@moralizer.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <form className="space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="First Name"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Last Name"
+                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                                    />
+                                </div>
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                                />
+                                <input
+                                    type="tel"
+                                    placeholder="Phone Number"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
+                                />
+                                <textarea
+                                    placeholder="Your Message..."
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all h-32 resize-none"
+                                />
+                                <button className="w-full bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
       {/* Footer - Unchanged */}
       <footer className="bg-gray-900 text-white p-8 mt-auto">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
