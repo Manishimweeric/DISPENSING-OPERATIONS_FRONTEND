@@ -28,57 +28,69 @@ const ManagerDashboard = () => {
 
         <nav className="space-y-4">
           {[
-            { name: 'Dashboard', icon: BarChart2, path: '/admindashboard/dashboard' },
-            { name: 'User Management', icon: Droplet, path: '/admindashboard/users' },
-            { name: 'Maintenance Management', icon: Clock, path: '/admindashboard/orders' },
-            { name: 'Station Management', icon: Users, isDropdown: true },
-            { name: 'Oil Management', icon: Users, isDropdown: true },
-            { name: 'Settings', icon: Settings, path: '/admindashboard/stations' },
-          ].map((item) => (
-            <div key={item.name}>
-              <div className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer" onClick={() => item.isDropdown ? (item.name === 'Oil Management' ? setIsOilManagementOpen(!isOilManagementOpen) : setIsStationManagementOpen(!isStationManagementOpen)) : null}>
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-                {item.isDropdown && <ChevronDown className={`h-4 w-4 transition-transform ${isOilManagementOpen || isStationManagementOpen ? 'rotate-180' : ''}`} />}
-              </div>
-              {item.isDropdown && ((item.name === 'Oil Management' && isOilManagementOpen) || (item.name === 'Station Management' && isStationManagementOpen)) && (
-                <div className="pl-8">
-                  {item.name === 'Oil Management' && (
-                    <>
-                      <Link
-                        to="/admindashboard/registerOil"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
-                      >
-                        Register Oil Type
-                      </Link>
-                      <Link
-                        to="/admindashboard/oils"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
-                      >
-                        View Oil Types
-                      </Link>
-                    </>
-                  )}
-                  {item.name === 'Station Management' && (
-                    <>
-                      <Link
-                        to="/admindashboard/registerStation"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
-                      >
-                        Register Station
-                      </Link>
-                      <Link
-                        to="/admindashboard/stations"
-                        className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
-                      >
-                        View Stations
-                      </Link>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+  { name: 'Dashboard', icon: BarChart2, path: '/admindashboard/dashboard' },
+  { name: 'User Management', icon: Droplet, path: '/admindashboard/users', isDropdown: false },
+  { name: 'Maintenance Management', icon: Clock, path: '/admindashboard/', isDropdown: false },
+  { name: 'Station Management', icon: Users, isDropdown: true },
+  { name: 'Oil Management', icon: Users, isDropdown: true },
+  { name: 'Settings', icon: Settings, path: '/admindashboard/', isDropdown: false },
+].map((item) => (
+  <div key={item.name}>
+    <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer ${item.isDropdown ? "" : "clickable"}`} onClick={() => {
+      if (item.isDropdown) {
+        item.name === 'Oil Management' 
+          ? setIsOilManagementOpen(!isOilManagementOpen) 
+          : setIsStationManagementOpen(!isStationManagementOpen);
+      }
+    }}>
+      <item.icon className="h-5 w-5" />
+      {item.isDropdown ? (
+        <>
+          <span>{item.name}</span>
+          <ChevronDown className={`h-4 w-4 transition-transform ${isOilManagementOpen || isStationManagementOpen ? 'rotate-180' : ''}`} />
+        </>
+      ) : (
+        <Link to={item.path} className="text-white">{item.name}</Link>
+      )}
+    </div>
+    {item.isDropdown && ((item.name === 'Oil Management' && isOilManagementOpen) || (item.name === 'Station Management' && isStationManagementOpen)) && (
+      <div className="pl-8">
+        {item.name === 'Oil Management' && (
+          <>
+            <Link
+              to="/admindashboard/registerOil"
+              className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
+            >
+              Register Oil Type
+            </Link>
+            <Link
+              to="/admindashboard/oils"
+              className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
+            >
+              View Oil Types
+            </Link>
+          </>
+        )}
+        {item.name === 'Station Management' && (
+          <>
+            <Link
+              to="/admindashboard/registerStation"
+              className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
+            >
+              Register Station
+            </Link>
+            <Link
+              to="/admindashboard/stations"
+              className="block px-4 py-2 rounded-lg hover:bg-blue-700 text-white"
+            >
+              View Stations
+            </Link>
+          </>
+        )}
+      </div>
+    )}
+  </div>
+))}
         </nav>
 
         <button className="absolute bottom-4 left-4 right-4 flex items-center justify-center space-x-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">

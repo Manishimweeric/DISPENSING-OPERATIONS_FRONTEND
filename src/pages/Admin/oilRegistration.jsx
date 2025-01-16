@@ -9,7 +9,7 @@ const OilTypeForm = () => {
   const navigate = useNavigate();
   const [oilType, setOilType] = useState({
     name: '',
-    status: '',
+    price: '',
   });
 
   const handleChange = (e) => {
@@ -19,7 +19,7 @@ const OilTypeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!oilType.name || !oilType.status) {
+    if (!oilType.name || !oilType.price) {
       Swal.fire('Error', 'All fields are required', 'error');
       return;
     }
@@ -82,20 +82,20 @@ const OilTypeForm = () => {
 
               <div className="mb-4 md:mb-6">
                 <label className="block text-sm font-medium text-gray-700" htmlFor="description">
-                  Oil Status
+                  Oil Price
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <MdDescription className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="text"
-                    name="status"
-                    id="status"
+                    type="number"
+                    name="price"
+                    id="price"
                     value={oilType.description}
                     onChange={handleChange}
                     className="block w-full pl-10 pr-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 text-sm"
-                    placeholder="Enter oil status"
+                    placeholder="Enter oil price per litre"
                   />
                 </div>
               </div>
