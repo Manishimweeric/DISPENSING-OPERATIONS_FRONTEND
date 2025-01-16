@@ -8,10 +8,12 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import Navigation from './components/navbar';
 import AdminNavbar from './components/Adminnavbar';  // Import the new AdminNavbar
 import Footer from './components/footer';
-
 import OilTypeForm from './pages/Admin/oilRegistration';
-
 import OperationDashboard from './pages/Operation/OperationDashboard';
+import ManagerDashboard from './pages/user/UserDashboard';
+import StockManag from './pages/stock/stock_overview';
+import Customers from './pages/user/customer';
+import DashboardOverview from './pages/user/managerDash';
 
 const App = () => {
   return (
@@ -29,12 +31,11 @@ const App = () => {
         <Route path="/OperationDashboard" element={<OperationDashboard />} />
 
 
-        {/* Manager Dashboard and Nested Routes */}
         <Route path="/managerDashboard" element={<ManagerDashboard />}>
-          <Route path="dashboard" element={<div>Manager Dashboard Overview</div>} />
+          <Route path="dashboard" element={<DashboardOverview />}/>
           <Route path="inventory" element={<StockManag />} />
-          {/* <Route path="orders" element={<Orders />} />
           <Route path="customers" element={<Customers />} />
+          {/* <Route path="orders" element={<Orders />} />  
           <Route path="operators" element={<PumpOperators />} />
           <Route path="settings" element={<Settings />} /> */}
         </Route>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Menu, X, Clock, BarChart2, Droplet, Users, Settings, LogOut } from 'lucide-react';
 import { Link, Outlet } from 'react-router-dom';
@@ -5,20 +6,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 
 
 const ManagerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-
-  const salesData = [
-    { month: 'Jan', Gasoline: 45000, Diesel: 38000 },
-    { month: 'Feb', Gasoline: 52000, Diesel: 45000 },
-    { month: 'Mar', Gasoline: 38000, Diesel: 42000 },
-    { month: 'Apr', Gasoline: 35000, Diesel: 40000 },
-  ];
-
-  const pumpOperators = [
-    { name: 'John Smith', status: 'active', shift: 'Morning' },
-    { name: 'Sarah Johnson', status: 'active', shift: 'Evening' },
-    { name: 'Mike Brown', status: 'break', shift: 'Morning' },
-    { name: 'Emily Davis', status: 'offline', shift: 'Night' },
-  ];
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -38,23 +25,22 @@ const ManagerDashboard = () => {
         </div>
 
         <nav className="space-y-4">
-          {[
-            { name: 'Dashboard', icon: BarChart2, path: '/managerDashboard/dashboard' },
+          {[{ name: 'Dashboard', icon: BarChart2, path: '/managerDashboard/dashboard' },
             { name: 'Inventory', icon: Droplet, path: '/managerDashboard/inventory' },
             { name: 'Orders', icon: Clock, path: '/manager/orders' },
-            { name: 'Customers', icon: Users, path: '/manager/customers' },
+            { name: 'Customers', icon: Users, path: '/managerDashboard/customers' },
             { name: 'Pump Operators', icon: Users, path: '/manager/operators' },
-            { name: 'Settings', icon: Settings, path: '/manager/settings' },
-          ].map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <item.icon className="h-5 w-5" />
-              <span>{item.name}</span>
-            </Link>
-          ))}
+            { name: 'Settings', icon: Settings, path: '/manager/settings' }]
+            .map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-green-800 transition-colors"
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.name}</span>
+              </Link>
+            ))}
         </nav>
 
         <button className="absolute bottom-4 left-4 right-4 flex items-center justify-center space-x-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
@@ -66,7 +52,7 @@ const ManagerDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-7xl mx-auto">
-          <Outlet /> {/* Renders the selected page based on the route */}
+          <Outlet />
         </div>
       </div>
     </div>

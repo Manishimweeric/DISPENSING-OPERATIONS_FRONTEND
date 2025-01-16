@@ -1,24 +1,135 @@
-import React, { useState } from 'react';
-import { Plus, AlertTriangle, X, Calendar, BarChart2, Droplet } from 'lucide-react';
-// import { Alert, AlertDescription } from '@/components/ui/alert';
+
+import React, { useState, useEffect } from 'react';
+import { Plus, X } from 'lucide-react';
+
+import Swal from 'sweetalert2';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const InventoryManagement = () => {
   const [showModal, setShowModal] = useState(false);
-  
-  // Sample inventory data
-  const inventoryData = [
-    { date: '11/11/2024', fuelType: 'Diesel', tankLevels: 90, rating: 4 },
-    { date: '22/10/2024', fuelType: 'Gasoline', tankLevels: 25, rating: 3 },
-    { date: '11/11/2024', fuelType: 'Diesel', tankLevels: 50, rating: 4 },
-  ];
+  const [oilTypes, setOilTypes] = useState([]); 
+  const [stocks, setStocks] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [alert, setAlert] = useState(null); 
+  const [formData, setFormData] = useState({
+    oil_type: '',
+    quantity: '',
+    price_per_litre: '',
+    date: '',
+    status: '',
+  });
 
-  const overallStock = [
-    { category: 'Diesel', level: 'adequate', quantity: '500L', value: '₹250000' },
-    { category: 'Gasoline', level: 'low', quantity: '100L', value: '₹2500' },
-  ];
+  useEffect(() => {
+    // Fetch both oil types and stocks when component mounts
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [oilTypesResponse, stocksResponse] = await Promise.all([
+          fetch(`${API_URL}/oiltypes/`),
+          fetch(`${API_URL}/stocks/`)
+        ]);
+
+        const oilTypesData = await oilTypesResponse.json();
+        const stocksData = await stocksResponse.json();
+
+        setOilTypes(oilTypesData);
+        setStocks(stocksData);
+      } catch (error) {
+        console.error('Failed to fetch data', error);
+        Swal.fire('Error', 'Failed to load inventory data', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Function to refresh stocks after adding new stock
+  const refreshStocks = async () => {
+    try {
+      const response = await fetch(`${API_URL}/stocks/`);
+      const data = await response.json();
+      setStocks(data);
+    } catch (error) {
+      console.error('Failed to refresh stocks', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.oil_type || !formData.quantity || !formData.price_per_litre || !formData.date || !formData.status) {
+      Swal.fire('Error', 'All fields are required', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/stocks/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        Swal.fire('Success', 'Stock recorded successfully!', 'success');
+        setShowModal(false);
+        setFormData({
+          oil_type: '',
+          quantity: '',
+          price_per_litre: '',
+          date: '',
+          status: '',
+        });
+        refreshStocks();
+      } else {
+        const data = await response.json();
+        Swal.fire('Error', data.detail || 'Unable to record stock', 'error');
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+    }
+  };
+
+  // Helper function to get oil type name by ID
+  const getOilTypeName = (oilTypeId) => {
+    const oilType = oilTypes.find(type => type.id === parseInt(oilTypeId));
+    return oilType ? oilType.name : 'Unknown';
+  };
+
+  // Function to get status color class
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'In Stock':
+        return 'text-green-600';
+      case 'Low Stock':
+        return 'text-yellow-600';
+      case 'Out of Stock':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {/* Alert Component */}
+      {/* {alert && (
+        <div className="mb-4">
+          <Alert variant={alert.type === 'error' ? 'destructive' : 'default'}>
+            <AlertDescription>{alert.message}</AlertDescription>
+          </Alert>
+        </div>
+      )} */}
+
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Inventory Management</h1>
@@ -31,89 +142,50 @@ const InventoryManagement = () => {
         </button>
       </div>
 
-      {/* Alert for Low Stock */}
-      {/* {overallStock.some(stock => stock.level === 'low') && (
-        // <Alert className="mb-6 border-red-200 bg-red-50">
-        //   <AlertTriangle className="h-4 w-4 text-red-500" />
-        //   <AlertDescription className="text-red-500">
-        //     Low Fuel In Upper Tank - please place an order
-        //   </AlertDescription>
-        // </Alert>
-      )} */}
-
-      {/* Overall Inventory Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {overallStock.map((stock) => (
-          <div key={stock.category} className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-semibold">{stock.category}</h3>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-                  stock.level === 'low' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'
-                }`}>
-                  {stock.level}
-                </span>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-500">Remaining Quantity</div>
-                <div className="text-lg font-bold">{stock.quantity}</div>
-                <div className="text-sm text-gray-500">{stock.value}</div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* Weekly Inventory Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">Weekly Inventory</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Fuel Type</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Tank Levels</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Rating</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {inventoryData.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 text-sm text-gray-900">{item.date}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-                      item.fuelType === 'Diesel' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
-                    }`}>
-                      {item.fuelType}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                        <div 
-                          className="bg-green-500 h-2 rounded-full" 
-                          style={{ width: `${item.tankLevels}%` }}
-                        />
-                      </div>
-                      <span className="text-sm">{item.tankLevels}%</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className={`text-lg ${i < item.rating ? 'text-yellow-400' : 'text-gray-200'}`}>
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                  </td>
+          {loading ? (
+            <div className="text-center py-4">Loading inventory data...</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Oil Type</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Quantity (L)</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Price/L</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {stocks.map((stock) => (
+                  <tr key={stock.id}>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {new Date(stock.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {getOilTypeName(stock.oil_type)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {stock.quantity}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      ${Number(stock.price_per_litre).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`font-medium ${getStatusColor(stock.status)}`}>
+                        {stock.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 
@@ -127,32 +199,64 @@ const InventoryManagement = () => {
                 <X size={20} />
               </button>
             </div>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Oil Type</label>
-                <select className="w-full border rounded-lg p-2">
-                  <option>Diesel</option>
-                  <option>Gasoline</option>
+                <select 
+                  name="oil_type" 
+                  value={formData.oil_type} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg p-2"
+                >
+                  <option value="">Select Oil Type</option>
+                  {oilTypes.map((type) => (
+                    <option key={type.id} value={type.id}>{type.name}</option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (L)</label>
-                <input type="number" className="w-full border rounded-lg p-2" />
+                <input 
+                  type="number" 
+                  name="quantity" 
+                  value={formData.quantity} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg p-2" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Price per Litre</label>
-                <input type="number" step="0.01" className="w-full border rounded-lg p-2" />
+                <input 
+                  type="number" 
+                  name="price_per_litre" 
+                  step="0.01" 
+                  value={formData.price_per_litre} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg p-2" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input type="date" className="w-full border rounded-lg p-2" />
+                <input 
+                  type="date" 
+                  name="date" 
+                  value={formData.date} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg p-2" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select className="w-full border rounded-lg p-2">
-                  <option>In Stock</option>
-                  <option>Low Stock</option>
-                  <option>Out of Stock</option>
+                <select 
+                  name="status" 
+                  value={formData.status} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg p-2"
+                >
+                  <option value="">Select Status</option>
+                  <option value="In Stock">In Stock</option>
+                  <option value="Low Stock">Low Stock</option>
+                  <option value="Out of Stock">Out of Stock</option>
                 </select>
               </div>
               <div className="flex justify-end space-x-3 pt-4">
