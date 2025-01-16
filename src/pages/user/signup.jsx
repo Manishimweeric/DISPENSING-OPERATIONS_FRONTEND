@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
-
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -11,10 +10,32 @@ const SignUp = () => {
     email: '',
     phone_number: '',
     password: '',
-    role: 'user',
-    status: 'active',
+    role: '',
+    station: '',
   });
   const [loading, setLoading] = useState(false);
+  const [stations, setStations] = useState([]); // Add state for the stations
+  const [roles] = useState(['Manager', 'Pumpster']); // Role options
+
+  // Fetch the stations from the API
+  useEffect(() => {
+    const fetchStations = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/stations/`); // Assuming this endpoint provides a list of stations
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to fetch stations');
+        }
+
+        setStations(data); // Set the fetched stations in state
+      } catch (error) {
+        console.error('Error fetching stations:', error);
+      }
+    };
+
+    fetchStations();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,9 +85,10 @@ const SignUp = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mt-20 w-full  flex rounded-2xl shadow-lg bg-white overflow-hidden">
+      <div className="max-w-5xl mt-20 w-full flex rounded-2xl shadow-lg bg-white overflow-hidden">
         <div className="hidden md:block w-1/2">
           <img 
             src="image/woman.png"
@@ -75,7 +97,6 @@ const SignUp = () => {
           />
         </div>
         <div className="w-full md:w-1/2 p-8">
-
           <div className="flex justify-end mb-6">
             <span className="text-green-500 text-lg font-semibold">Source OIL</span>
           </div>
@@ -86,93 +107,100 @@ const SignUp = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="sr-only" htmlFor="fullName">Full Name</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <input
-                    id="fullName"
-                    name="name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Full Name"
-                  />
-                </div>
-              </div>
+            {/* Full Name */}
+            <div>
+              <label className="sr-only" htmlFor="fullName">Full Name</label>
+              <input
+                id="fullName"
+                name="name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className="block w-full py-2.5 px-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                placeholder="Full Name"
+              />
+            </div>
 
-              {/* Email */}
-              <div>
-                <label className="sr-only" htmlFor="email">Email Address</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Email Address"
-                  />
-                </div>
-              </div>
+            {/* Email */}
+            <div>
+              <label className="sr-only" htmlFor="email">Email Address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="block w-full py-2.5 px-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                placeholder="Email Address"
+              />
+            </div>
 
-              {/* Phone Number */}
-              <div>
-                <label className="sr-only" htmlFor="phone">Phone Number</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <input
-                    id="phone"
-                    name="phone_number"
-                    type="tel"
-                    required
-                    value={formData.phone_number}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Phone Number"
-                  />
-                </div>
-              </div>
+            {/* Phone Number */}
+            <div>
+              <label className="sr-only" htmlFor="phone">Phone Number</label>
+              <input
+                id="phone"
+                name="phone_number"
+                type="tel"
+                required
+                value={formData.phone_number}
+                onChange={handleChange}
+                className="block w-full py-2.5 px-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                placeholder="Phone Number"
+              />
+            </div>
 
-              {/* Password */}
-              <div>
-                <label className="sr-only" htmlFor="password">Password</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="Password"
-                  />
-                </div>
-              </div>
+            {/* Password */}
+            <div>
+              <label className="sr-only" htmlFor="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="block w-full py-2.5 px-3 border border-gray-300 rounded-lg placeholder-gray-500 focus:ring-2 focus:ring-green-500"
+                placeholder="Password"
+              />
+            </div>
+
+            {/* Role Select */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+              <select
+                name="role"
+                id="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                required
+              >
+                <option value="" disabled>Select Role</option>
+                {roles.map((role, index) => (
+                  <option key={index} value={role}>{role}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Station Select */}
+            <div>
+              <label htmlFor="station" className="block text-sm font-medium text-gray-700">Station</label>
+              <select
+                name="station"
+                id="station"
+                value={formData.station}
+                onChange={handleChange}
+                className="block w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                required
+              >
+                <option value="" disabled>Select Station</option>
+                {stations.map((station) => (
+                  <option key={station.id} value={station.id}>{station.name}</option> // Adjust based on your station model's attributes
+                ))}
+              </select>
             </div>
 
             <button
@@ -188,7 +216,7 @@ const SignUp = () => {
 
           {/* Login link */}
           <p className="mt-4 mb-0 text-center text-muted">
-          Already has An Account?
+            Already has An Account?
             <Link to="/login" className="text-decoration-none text-green-500 hover:text-green-600 hover:text-primary-dark transition duration-200 ml-1">
               Login
             </Link>
