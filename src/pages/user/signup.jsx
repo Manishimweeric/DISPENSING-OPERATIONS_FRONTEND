@@ -14,8 +14,8 @@ const SignUp = () => {
     station: '',
   });
   const [loading, setLoading] = useState(false);
-  const [stations, setStations] = useState([]); // Add state for the stations
-  const [roles] = useState(['Manager', 'Pumpster']); // Role options
+  const [stations, setStations] = useState([]); 
+  const [roles] = useState(['Manager', 'Pump operator']); // Role options
 
   // Fetch the stations from the API
   useEffect(() => {

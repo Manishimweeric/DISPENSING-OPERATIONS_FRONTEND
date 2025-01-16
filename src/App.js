@@ -17,7 +17,7 @@ import OilTypeForm from './pages/Admin/oilRegistration';
 import StationRegistrationForm from './pages/Admin/registerStation';
 import StationManagement from './pages/Admin/Station';
 import OilManagementTable from './pages/Admin/oils';
-
+import PumpOperators from './pages/user/pump_operators';
 const App = () => {
   return (
     <Router>
@@ -35,8 +35,8 @@ const App = () => {
           <Route path="dashboard" element={<DashboardOverview />}/>
           <Route path="inventory" element={<StockManag />} />
           <Route path="customers" element={<Customers />} />
-          {/* <Route path="orders" element={<Orders />} />  
           <Route path="operators" element={<PumpOperators />} />
+          {/* <Route path="orders" element={<Orders />} />  
           <Route path="settings" element={<Settings />} /> */}
         </Route>
 

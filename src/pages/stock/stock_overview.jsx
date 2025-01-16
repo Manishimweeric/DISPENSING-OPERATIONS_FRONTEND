@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
-
 import Swal from 'sweetalert2';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -21,7 +19,6 @@ const InventoryManagement = () => {
   });
 
   useEffect(() => {
-    // Fetch both oil types and stocks when component mounts
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -46,14 +43,16 @@ const InventoryManagement = () => {
     fetchData();
   }, []);
 
-  // Function to refresh stocks after adding new stock
-  const refreshStocks = async () => {
-    try {
-      const response = await fetch(`${API_URL}/stocks/`);
-      const data = await response.json();
-      setStocks(data);
-    } catch (error) {
-      console.error('Failed to refresh stocks', error);
+  const handleOilTypeChange = (e) => {
+    const oilTypeId = e.target.value;
+    setFormData({ ...formData, oil_type: oilTypeId });
+
+    const oilType = oilTypes.find(type => type.id === parseInt(oilTypeId));
+    if (oilType) {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        price_per_litre: oilType.price,
+      }));
     }
   };
 
@@ -99,13 +98,21 @@ const InventoryManagement = () => {
     }
   };
 
-  // Helper function to get oil type name by ID
+  const refreshStocks = async () => {
+    try {
+      const response = await fetch(`${API_URL}/stocks/`);
+      const data = await response.json();
+      setStocks(data);
+    } catch (error) {
+      console.error('Failed to refresh stocks', error);
+    }
+  };
+
   const getOilTypeName = (oilTypeId) => {
     const oilType = oilTypes.find(type => type.id === parseInt(oilTypeId));
     return oilType ? oilType.name : 'Unknown';
   };
 
-  // Function to get status color class
   const getStatusColor = (status) => {
     switch (status) {
       case 'In Stock':
@@ -121,16 +128,6 @@ const InventoryManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Alert Component */}
-      {/* {alert && (
-        <div className="mb-4">
-          <Alert variant={alert.type === 'error' ? 'destructive' : 'default'}>
-            <AlertDescription>{alert.message}</AlertDescription>
-          </Alert>
-        </div>
-      )} */}
-
-      {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Inventory Management</h1>
         <button
@@ -142,7 +139,6 @@ const InventoryManagement = () => {
         </button>
       </div>
 
-      {/* Weekly Inventory Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">Weekly Inventory</h2>
@@ -189,7 +185,6 @@ const InventoryManagement = () => {
         </div>
       </div>
 
-      {/* Add New Stock Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -205,12 +200,14 @@ const InventoryManagement = () => {
                 <select 
                   name="oil_type" 
                   value={formData.oil_type} 
-                  onChange={handleChange} 
+                  onChange={handleOilTypeChange} 
                   className="w-full border rounded-lg p-2"
                 >
                   <option value="">Select Oil Type</option>
                   {oilTypes.map((type) => (
-                    <option key={type.id} value={type.id}>{type.name}</option>
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -227,9 +224,8 @@ const InventoryManagement = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Price per Litre</label>
                 <input 
-                  type="number" 
+                  type="text" 
                   name="price_per_litre" 
-                  step="0.01" 
                   value={formData.price_per_litre} 
                   onChange={handleChange} 
                   className="w-full border rounded-lg p-2" 
