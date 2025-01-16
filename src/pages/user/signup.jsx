@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
+
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 const SignUp = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -8,11 +13,8 @@ const SignUp = () => {
     password: '',
     role: 'user',
     status: 'active',
-
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +27,6 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const response = await fetch(`${API_URL}/api/users/`, {
@@ -33,7 +34,7 @@ const SignUp = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -42,23 +43,30 @@ const SignUp = () => {
         throw new Error(data.message || 'Registration failed');
       }
 
-      setSuccessMessage('Registration successful! Redirecting to login...');
+      Swal.fire({
+        title: 'Success!',
+        text: 'Registration successful! Redirecting to login...',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+
       setTimeout(() => {
-        // Redirect to login page or handle UI accordingly
         window.location.href = '/login';
       }, 2000);
     } catch (err) {
-      setError(err.message || 'Something went wrong');
+      Swal.fire({
+        title: 'Error!',
+        text: err.message || 'Something went wrong',
+        icon: 'error',
+        confirmButtonText: 'Try Again'
+      });
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Card Container */}
-      <div className="max-w-4xl w-full flex rounded-2xl shadow-lg bg-white overflow-hidden">
-        {/* Left side - Image */}
+      <div className="max-w-5xl mt-20 w-full  flex rounded-2xl shadow-lg bg-white overflow-hidden">
         <div className="hidden md:block w-1/2">
           <img 
             src="image/woman.png"
@@ -66,31 +74,19 @@ const SignUp = () => {
             className="w-full h-full object-cover"
           />
         </div>
-
-        {/* Right side - Form */}
         <div className="w-full md:w-1/2 p-8">
-          {/* Logo */}
+
           <div className="flex justify-end mb-6">
             <span className="text-green-500 text-lg font-semibold">Source OIL</span>
           </div>
 
-          {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold mb-1">Hello!</h1>
             <p className="text-sm text-gray-600">Sign Up to Get Started</p>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 rounded bg-red-50 text-red-500 text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4">
-              {/* Full Name */}
               <div>
                 <label className="sr-only" htmlFor="fullName">Full Name</label>
                 <div className="relative">
@@ -191,11 +187,11 @@ const SignUp = () => {
           </form>
 
           {/* Login link */}
-          <p className="mt-6 text-center text-xs text-gray-600">
-            Already has An Account?
-            <a href="#" className="font-medium text-green-500 hover:text-green-600 ml-1">
+          <p className="mt-4 mb-0 text-center text-muted">
+          Already has An Account?
+            <Link to="/login" className="text-decoration-none text-green-500 hover:text-green-600 hover:text-primary-dark transition duration-200 ml-1">
               Login
-            </a>
+            </Link>
           </p>
         </div>
       </div>

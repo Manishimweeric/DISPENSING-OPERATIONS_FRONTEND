@@ -7,14 +7,11 @@
     "lucide-react": "^0.471.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-<<<<<<< HEAD
-    "react-scripts": "^5.0.1",
-=======
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "recharts": "^2.15.0",
->>>>>>> 40abeec355e75486c0c42cb38f05c4dc969dfc8d
+    "sweetalert2": "^11.15.10",
     "web-vitals": "^4.2.4"
   },
   "scripts": {

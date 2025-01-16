@@ -2,69 +2,18 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import Signup from './pages/user/signup';
-import Navbar from './components/navbar'; // Adjust the path as needed
-import Footer from './components/footer'; // Adjust the path as needed
-import Login from './pages/auth/login'; // Adjust the path as needed
+import Login from './pages/auth/login';
 import AdminDashboard from './pages/adminDashboard';
+import Navigation from './components/navbar'; // Assuming you have the navbar component
 
 const App = () => {
   return (
     <Router>
+      <Navigation /> 
       <Routes>
-        {/* Public Routes with Navbar and Footer */}
-        <Route
-          path="/"
-          element={
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-
-              {/* Spacer */}
-              <div className="h-20"></div>
-
-              {/* Main Content */}
-              <Home />
-
-              {/* Footer */}
-              <Footer />
-            </div>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-
-              {/* Spacer */}
-              <div className="h-20"></div>
-
-              {/* Main Content */}
-              <Signup />
-
-              {/* Footer */}
-              <Footer />
-            </div>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-
-              {/* Spacer */}
-              <div className="h-20"></div>
-
-              {/* Main Content */}
-              <Login />
-
-              {/* Footer */}
-              <Footer />
-            </div>
-          }
-        />
-
-        {/* Admin Dashboard Route (No Navbar or Footer) */}
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
