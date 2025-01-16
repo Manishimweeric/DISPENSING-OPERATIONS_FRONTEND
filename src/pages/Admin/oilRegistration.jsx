@@ -37,7 +37,6 @@ const OilTypeForm = () => {
 
       if (response.ok) {
         Swal.fire('Success', 'Oil type registered successfully!', 'success').then(() => {
-          navigate('/oiltypes');
         });
       } else {
         Swal.fire('Error', data.detail || 'Unable to register oil type', 'error');
