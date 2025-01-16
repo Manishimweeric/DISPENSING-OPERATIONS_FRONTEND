@@ -38,16 +38,16 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        const data = await response.json();
-        const { role } = data; 
-  
+        const role = data.user.role;   
         Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
           if (role === 'admin') {
             navigate('/admindashboard'); 
           } else if (role === 'user') {
             navigate('/userdashboard'); 
+          }else if (role === 'Operation') {
+              navigate('/operationDashboard');
           } else {
-            navigate('/');
+            navigate('/login');
           }
         });
       } else {
