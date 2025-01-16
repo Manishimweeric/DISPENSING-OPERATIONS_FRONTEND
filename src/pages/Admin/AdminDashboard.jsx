@@ -32,7 +32,7 @@ const Dashboard = () => {
             <a href="#" className="flex items-center space-x-2 p-2 bg-green-600 rounded-lg">
               <span className="text-sm">Dashboard</span>
             </a>
-            {['Fuel Inventory', 'Order Management', 'Quality Control', 'Maintenance', 'Training', 'Reports', 'Settings'].map((item) => (
+            {['User Management', 'Station Management', 'Maintenance Management', 'Oil type'].map((item) => (
               <a key={item} href="#" className="flex items-center space-x-2 p-2 hover:bg-green-600 rounded-lg transition-colors">
                 <span className="text-sm">{item}</span>
               </a>
