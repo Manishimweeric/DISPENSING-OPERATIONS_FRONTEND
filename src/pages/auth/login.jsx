@@ -39,6 +39,10 @@ const LoginPage = () => {
 
       if (response.ok) {
         const role = data.user.role;   
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('role', role);
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem('user_id', data.user.id);
         Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
           if (role === 'admin') {
             navigate('/admindashboard'); 

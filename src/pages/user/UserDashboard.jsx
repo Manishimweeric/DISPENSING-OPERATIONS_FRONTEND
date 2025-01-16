@@ -9,15 +9,12 @@ const ManagerDashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Mobile Sidebar Toggle */}
       <button 
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md"
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
-
-      {/* Sidebar */}
       <div className={`fixed lg:static inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 w-64 bg-green-500 text-white p-6 overflow-y-auto z-40`}>
         <div className="flex items-center mb-8">
           <Droplet className="h-8 w-8" />
