@@ -25,10 +25,10 @@ const ManagerDashboard = () => {
         </div>
 
         <nav className="space-y-4">
-          {[{ name: 'Dashboard', icon: BarChart2, path: '/managerDashboard/dashboard' },
-            { name: 'Inventory', icon: Droplet, path: '/managerDashboard/inventory' },
+          {[{ name: 'Dashboard', icon: BarChart2, path: '/manager/dashboard' },
+            { name: 'Inventory', icon: Droplet, path: '/manager/inventory' },
             { name: 'Orders', icon: Clock, path: '/manager/orders' },
-            { name: 'Customers', icon: Users, path: '/managerDashboard/customers' },
+            { name: 'Customers', icon: Users, path: '/manager/customers' },
             { name: 'Pump Operators', icon: Users, path: '/manager/operators' },
             { name: 'Settings', icon: Settings, path: '/manager/settings' }]
             .map((item) => (
