@@ -38,9 +38,18 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {         
+        const data = await response.json();
+        const { role } = data; 
+  
+        Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
+          if (role === 'admin') {
+            navigate('/admindashboard'); 
+          } else if (role === 'user') {
+            navigate('/userdashboard'); 
+          } else {
+            navigate('/');
+          }
         });
-        // navigate('/dashboard');
       } else {
         Swal.fire('Error', data.detail || 'Invalid credentials', 'error');
       }
