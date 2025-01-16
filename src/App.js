@@ -6,6 +6,7 @@ import Login from './pages/auth/login';
 import AdminDashboard from './pages/Admin/adminDashboard';
 import Navigation from './components/navbar';
 import Footer from './components/footer';
+import OperationDashboard from './pages/Operation/OperationDashboard';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/signup" element={<div><Navigation /><Signup />   <Footer /></div>} />
         <Route path="/login" element={<div><Navigation /><Login />  <Footer /> </div>}/>
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/OperationDashboard" element={<OperationDashboard />} />
       </Routes>     
     </Router>
   );
