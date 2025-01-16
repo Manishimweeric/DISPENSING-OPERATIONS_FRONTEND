@@ -4,7 +4,8 @@ import Home from './pages/home';
 import Signup from './pages/user/signup';
 import Login from './pages/auth/login';
 import AdminDashboard from './pages/adminDashboard';
-import Navigation from './components/navbar'; // Assuming you have the navbar component
+import Navigation from './components/navbar';
+import Footer from './components/footer';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
       </Routes>
+      <Footer />
     </Router>
   );
 };
