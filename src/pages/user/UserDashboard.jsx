@@ -1,11 +1,15 @@
-
 import React from 'react';
 import { Menu, X, Clock, BarChart2, Droplet, Users, Settings, LogOut } from 'lucide-react';
-import { Link, Outlet } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const ManagerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -22,25 +26,29 @@ const ManagerDashboard = () => {
         </div>
 
         <nav className="space-y-4">
-          {[{ name: 'Dashboard', icon: BarChart2, path: '/manager/dashboard' },
+          {[
+            { name: 'Dashboard', icon: BarChart2, path: '/manager/dashboard' },
             { name: 'Inventory', icon: Droplet, path: '/manager/inventory' },
             { name: 'Orders', icon: Clock, path: '/manager/orders' },
             { name: 'Customers', icon: Users, path: '/manager/customers' },
             { name: 'Pump Operators', icon: Users, path: '/manager/operators' },
-            { name: 'Settings', icon: Settings, path: '/manager/settings' }]
-            .map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-green-800 transition-colors"
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            ))}
+            { name: 'Settings', icon: Settings, path: '/manager/settings' }
+          ].map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-green-800 transition-colors"
+            >
+              <item.icon className="h-5 w-5" />
+              <span>{item.name}</span>
+            </Link>
+          ))}
         </nav>
 
-        <button className="absolute bottom-4 left-4 right-4 flex items-center justify-center space-x-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="absolute bottom-4 left-4 right-4 flex items-center justify-center space-x-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
           <LogOut className="h-5 w-5" />
           <span>Logout</span>
         </button>

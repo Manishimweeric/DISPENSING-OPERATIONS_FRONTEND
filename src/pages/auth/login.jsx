@@ -46,9 +46,9 @@ const LoginPage = () => {
         Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
           if (role === 'admin') {
             navigate('/admindashboard'); 
-          } else if (role === 'manager') {
+          } else if (role === 'Manager') {
             navigate('/manager/dashboard'); 
-          }else if (role === 'Operation') {
+          }else if (role === 'Pump operator') {
               navigate('/operationDashboard');
           } else {
             navigate('/login');
