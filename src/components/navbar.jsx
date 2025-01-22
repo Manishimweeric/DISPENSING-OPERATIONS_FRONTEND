@@ -6,12 +6,17 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white z-50 border-b shadow-sm">
+    <nav className="fixed h-24  top-0 left-0 right-0 bg-white z-50 border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <div className="flex-shrink-0">
-            <div className="text-green-500 text-2xl font-bold tracking-tight">Source Oil</div>
-          </div>
+        <div className="flex-shrink-0 flex items-center space-x-2">
+          <img
+            src="image/logo.jpg"
+            alt="Source Oil Logo"
+            className="h-20 w-20 object-contain"
+          />
+        </div>
+
           
           <div className="md:hidden">
             <button

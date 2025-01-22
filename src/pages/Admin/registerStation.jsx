@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MdLocalGasStation, MdLocationOn, MdCheckCircle } from 'react-icons/md';
+import { MdLocalGasStation, MdLocationOn, MdCheckCircle,MdAdd } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -50,19 +50,19 @@ const StationRegistrationForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full w-full bg-gray-100">
-      <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-5xl">
-        <div className="w-full md:w-1/2 bg-cover bg-center hidden md:block" 
-          style={{ backgroundImage: "url('image/gas.jpg')", minHeight: '300px' }} />
-        <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 relative">
+    <div className="flex items-center justify-center h-full w-full mt-60 bg-gray-100">
+       
           <div className="absolute top-4 right-4">
             <h1 className="text-xl md:text-2xl font-bold text-green-600">Source OIL</h1>
           </div>
-          <div className="w-full max-w-md mx-auto">
-            <h2 className="text-lg md:text-xl text-center mb-4 md:mb-6">Register New Station</h2>
-            
+          <div className="w-full max-w-2xl mx-auto">
+              <h2 className="text-lg md:text-2xl mb-4 md:mb-6 flex items-center">
+                <MdAdd className="text-xl md:text-2xl mr-2" />
+                Register New Station
+              </h2>
+                  
             <form onSubmit={handleSubmit}>
-              <div className="mb-4 md:mb-6">
+              <div className="mb-4 md:mb-6  ">
                 <label className="block text-sm font-medium text-gray-700" htmlFor="name">
                   Station Name
                 </label>
@@ -72,7 +72,7 @@ const StationRegistrationForm = () => {
                   </div>
                   <input
                     type="text"
-                    name="name"
+                    name="name"ya
                     id="name"
                     value={station.name}
                     onChange={handleChange}
@@ -120,7 +120,6 @@ const StationRegistrationForm = () => {
                     <option value="">Select status</option>
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
-                    <option value="Maintenance">Maintenance</option>
                   </select>
                 </div>
               </div>
@@ -134,8 +133,8 @@ const StationRegistrationForm = () => {
             </form>
           </div>
         </div>
-      </div>
-    </div>
+      
+  
   );
 };
 

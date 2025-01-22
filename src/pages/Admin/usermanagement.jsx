@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MdEdit, MdDelete, MdSearch, MdRefresh } from 'react-icons/md';
+import { Link } from "react-router-dom";
+import { MdAdd } from "react-icons/md";
 import Swal from 'sweetalert2';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -105,6 +107,13 @@ const UserManagementTable = () => {
             <MdRefresh className="mr-2" />
             Refresh
           </button>
+          <Link
+            to="/admindashboard/signup" // Replace with the correct route for adding a user
+            className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          >
+            <MdAdd className="mr-2" />
+            Add User
+            </Link>
         </div>
       </div>
 

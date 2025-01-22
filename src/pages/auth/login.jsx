@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MdEmail, MdLock } from 'react-icons/md';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
@@ -66,7 +65,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="flex flex-col mt-20 md:flex-row bg-white shadow-lg rounded-lg overflow-hidden" style={{ maxWidth: '1400px', width: '90%', minHeight: 'auto', height: '85vh' }}>
-        <div className="w-full md:w-1/2 bg-cover bg-center hidden md:block" style={{ backgroundImage: "url('image/pers.jpg')", minHeight: '300px' }} />
+        <div className="w-full md:w-1/2 bg-cover bg-center hidden md:block" style={{ backgroundImage: "url('image/pomp.jpg')", minHeight: '300px' }} />
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 relative">
           <div className="absolute top-4 right-4">
             <h1 className="text-xl md:text-2xl font-bold text-green-600">Source OIL</h1>
@@ -120,17 +119,6 @@ const LoginPage = () => {
                 Login
               </button>
             </form>
-            <p className="mt-4 md:mt-6 text-center text-xs md:text-sm text-gray-600">
-              <a href="#" className="font-medium text-green-600 hover:text-green-500">
-                Forgot Password?
-              </a>
-            </p>
-            <p className="mt-4 mb-0 text-center text-muted">
-              Need an account? 
-              <Link to="/signup" className="text-decoration-none text-blue-600 hover:text-primary-dark transition duration-200 ml-1">
-                Create one
-              </Link>
-            </p>
           </div>
         </div>
       </div>

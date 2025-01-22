@@ -69,7 +69,7 @@ const OilManagementTable = () => {
   });
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 bg-white rounded-lg mt-48  shadow-lg">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Oil Management</h2>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">

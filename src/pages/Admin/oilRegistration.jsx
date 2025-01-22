@@ -11,7 +11,7 @@ const OilTypeForm = () => {
     name: '',
     price: '',
   });
-
+  
   const handleChange = (e) => {
     setOilType({ ...oilType, [e.target.name]: e.target.value });
   };
@@ -48,15 +48,10 @@ const OilTypeForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-full w-full bg-gray-100">
-      <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-5xl">
-        <div className="w-full md:w-1/2 bg-cover bg-center hidden md:block" style={{ backgroundImage: "url('image/oil.jpg')", minHeight: '300px' }} />
+    <div className="flex items-center justify-center mt-60 h-full w-full bg-gray-100">
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 relative">
-          <div className="absolute top-4 right-4">
-            <h1 className="text-xl md:text-2xl font-bold text-green-600">Source OIL</h1>
-          </div>
-          <div className="w-full max-w-md mx-auto">
-            <h2 className="text-lg md:text-xl text-center mb-4 md:mb-6">Register New Oil Type</h2>
+          <div className="w-full max-w-4xl mx-auto">
+            <h2 className="text-lg md:text-2xl   mb-4 md:mb-6">Register New Oil Type</h2>
             
             <form onSubmit={handleSubmit}>
               <div className="mb-4 md:mb-6">
@@ -111,7 +106,6 @@ const OilTypeForm = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
