@@ -17,6 +17,8 @@ import OilTypeForm from './pages/Admin/oilRegistration';
 import StationRegistrationForm from './pages/Admin/registerStation';
 import StationManagement from './pages/Admin/Station';
 import OilManagementTable from './pages/Admin/oils';
+import PumpOperators from './pages/user/pump_operators';
+
 
 const App = () => {
   return (
@@ -26,21 +28,23 @@ const App = () => {
         <Route path="/login" element={<div><Navigation /><Login />  <Footer /> </div>}/>
         <Route path="/registerOil" element={<OilTypeForm />} /> 
         <Route path="/OperationDashboard" element={<OperationDashboard />} />   
+        <Route path="/" element={<div><Navigation /> <Home />  <Footer /></div>} />
+        <Route path="/signup" element={<div><Navigation /><Signup />   <Footer /></div>} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/OperationDashboard" element={<OperationDashboard />} />       
+        {/* Main Pages */}
         <Route path="/" element={<div><Navigation /> <Home /> <Footer /></div>} />
         <Route path="/login" element={<div><Navigation /><Login /> <Footer /></div>} />
         
         <Route path="/OperationDashboard" element={<OperationDashboard />} />
-
-
         <Route path="/manager" element={<ManagerDashboard />}>
           <Route path="dashboard" element={<DashboardOverview />}/>
           <Route path="inventory" element={<StockManag />} />
           <Route path="customers" element={<Customers />} />
-          {/* <Route path="orders" element={<Orders />} />  
           <Route path="operators" element={<PumpOperators />} />
+          {/* <Route path="orders" element={<Orders />} />  
           <Route path="settings" element={<Settings />} /> */}
         </Route>
-
         <Route path="/admindashboard" element={<AdminDashboard />}>
           <Route path="dashboard" element={<div>Admin Dashboard Overview</div>} />
           <Route path="registerOil" element={<OilTypeForm />} />
