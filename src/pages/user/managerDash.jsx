@@ -1,61 +1,140 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useState } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import Swal from 'sweetalert2';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const DashboardPage = () => {
-  const salesData = [
-    { month: 'Jan', Gasoline: 45000, Diesel: 38000 },
-    { month: 'Feb', Gasoline: 52000, Diesel: 45000 },
-    { month: 'Mar', Gasoline: 38000, Diesel: 42000 },
-    { month: 'Apr', Gasoline: 35000, Diesel: 40000 },
-  ];
+  const [chartData, setChartData] = useState([]);
+  const [pumpsters, setPumpsters] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const pumpOperators = [
-    { name: 'John Smith', status: 'active', shift: 'Morning' },
-    { name: 'Sarah Johnson', status: 'active', shift: 'Evening' },
-    { name: 'Mike Brown', status: 'break', shift: 'Morning' },
-    { name: 'Emily Davis', status: 'offline', shift: 'Night' },
-  ];
+  useEffect(() => {
+    const fetchSummaryData = async () => {
+      try {
+        setLoading(true);
+
+        const [customersResponse, usersResponse, stocksResponse] = await Promise.all([
+          fetch(`${API_URL}/customers/`),
+          fetch(`${API_URL}/users/`),
+          fetch(`${API_URL}/stocks/`),
+        ]);
+
+        if (!customersResponse.ok || !usersResponse.ok || !stocksResponse.ok) {
+          throw new Error('Failed to fetch one or more endpoints.');
+        }
+
+        const customersData = await customersResponse.json();
+        const usersData = await usersResponse.json();
+        const stocksData = await stocksResponse.json();
+
+        const totalCustomers = customersData.length;
+        const totalPumpsters = usersData.filter((user) => user.role === 'Pumpster').length;
+        const totalInventory = stocksData.length;
+
+        setChartData([
+          { name: 'Customers', count: totalCustomers },
+          { name: 'Pumpsters', count: totalPumpsters },
+          { name: 'Inventory', count: totalInventory },
+        ]);
+
+        setPumpsters(usersData.filter((user) => user.role === 'Pumpster'));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        Swal.fire('Error', 'Failed to load summary data', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSummaryData();
+  }, []);
 
   return (
-    <div className="p-8">
-      {/* Sales Chart */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Sales Overview</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={salesData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Bar dataKey="Gasoline" fill="#8884d8" />
-            <Bar dataKey="Diesel" fill="#82ca9d" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="w-full h-full px-6 py-4">
+      {loading ? (
+        <p className="text-center text-xl font-semibold">Loading...</p>
+      ) : (
+        <div className="space-y-6">
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Dashboard Overview</h2>
 
-      {/* Pump Operators Table */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Pump Operators</h2>
-        <table className="min-w-full table-auto">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 text-left text-gray-600">Name</th>
-              <th className="px-4 py-2 text-left text-gray-600">Status</th>
-              <th className="px-4 py-2 text-left text-gray-600">Shift</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pumpOperators.map((operator) => (
-              <tr key={operator.name}>
-                <td className="px-4 py-2">{operator.name}</td>
-                <td className={`px-4 py-2 ${operator.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                  {operator.status}
-                </td>
-                <td className="px-4 py-2">{operator.shift}</td>
-              </tr>
+          {/* Flex Grid for Bar Chart and Pumpsters */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            {/* Bar Chart Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">
+                Total Numbers of Customers, Pumpsters, and Inventory
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#8884d8" name="Count" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+                <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">Pumpsters</h3>
+                {pumpsters.length > 0 ? (
+                  <table className="min-w-full table-auto">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="py-2 px-4 text-left text-gray-600">Name</th>
+                        <th className="py-2 px-4 text-left text-gray-600">Phone</th>
+                        <th className="py-2 px-4 text-left text-gray-600">Registered</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pumpsters.map((pumpster) => (
+                        <tr key={pumpster.id} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-4 text-gray-700">{pumpster.name}</td>
+                          <td className="py-2 px-4 text-gray-600">{pumpster.phone_number}</td>
+                          <td className="py-2 px-4 text-gray-600">
+                            {new Date(pumpster.created_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="text-gray-500 text-center">No pumpsters available.</p>
+                )}
+              </div>
+
+          </div>
+
+          {/* Summary Stats (Hello Cards Section) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Cards */}
+            {['Customers', 'Pumpsters', 'Inventory'].map((category, idx) => (
+              <div
+                key={idx}
+                className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="text-center mb-4">
+                  <span className="text-4xl font-bold text-gray-700">{category}</span>
+                </div>
+                <p className="text-lg font-semibold text-center text-gray-800">
+                  {category === 'Customers' ? chartData[0].count : category === 'Pumpsters' ? chartData[1].count : chartData[2].count}
+                </p>
+                <p className="text-center text-gray-600 mt-2">{category} Count</p>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

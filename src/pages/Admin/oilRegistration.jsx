@@ -63,7 +63,7 @@ const OilTypeForm = () => {
                     <MdWaterDrop className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type="text"
+                    type="text"   
                     name="name"
                     id="name"
                     value={oilType.name}
@@ -98,7 +98,7 @@ const OilTypeForm = () => {
 
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-sm font-medium shadow-md hover:shadow-lg"
+                className="w-full bg-yellow-700 text-white py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:bg-yellow-700 text-sm font-medium shadow-md hover:shadow-lg"
               >
                 Register Oil Type
               </button>

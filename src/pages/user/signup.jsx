@@ -16,6 +16,7 @@ const SignUp = () => {
   const [stations, setStations] = useState([]);
   const [roles] = useState(['Manager', 'Pumpster']);
 
+
   useEffect(() => {
     const fetchStations = async () => {
       try {
@@ -47,7 +48,6 @@ const SignUp = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Registration failed');
       Swal.fire('Success!', 'Registration successful!', 'success');
-      setTimeout(() => (window.location.href = '/login'), 2000);
     } catch (err) {
       Swal.fire('Error!', err.message || 'Something went wrong', 'error');
     } finally {
@@ -56,8 +56,8 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-6 lg:px-8">
-      <div className=" w-[60%] rounded-lg p-8">
+    <div className="min-h-screen flex  ml-48 bg-gray-100 py-12 px-6 lg:px-8">
+      <div className=" w-[80%] rounded-lg p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Register</h1>
         <p className="text-gray-600 mb-6">Create an account to get started</p>
 
@@ -179,7 +179,7 @@ const SignUp = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-green-500 hover:bg-green-600 focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-yellow-700 hover:bg-yellow-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
                 loading && 'opacity-50 cursor-not-allowed'
               }`}
             >

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, X, Download } from 'lucide-react';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const InventoryManagement = () => {
   const [showModal, setShowModal] = useState(false);
-  const [oilTypes, setOilTypes] = useState([]); 
-  const [stocks, setStocks] = useState([]); 
-  const [loading, setLoading] = useState(true); 
-  const [alert, setAlert] = useState(null); 
+  const [oilTypes, setOilTypes] = useState([]);
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     oil_type: '',
     quantity: '',
@@ -17,6 +18,7 @@ const InventoryManagement = () => {
     date: '',
     status: '',
   });
+  const tableRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +45,27 @@ const InventoryManagement = () => {
     fetchData();
   }, []);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Inventory Report', 14, 16);
+    doc.autoTable({
+      head: [['Date', 'Oil Type', 'Quantity (L)', 'Price/L', 'Status']],
+      body: stocks.map(stock => [
+        new Date(stock.date).toLocaleDateString(),
+        getOilTypeName(stock.oil_type),
+        stock.quantity,
+        `$${Number(stock.price_per_litre).toFixed(2)}`,
+        stock.status,
+      ]),
+      startY: 20,
+    });
+    doc.save('inventory-report.pdf');
+  };
+
   const handleOilTypeChange = (e) => {
     const oilTypeId = e.target.value;
     setFormData({ ...formData, oil_type: oilTypeId });
@@ -62,7 +85,7 @@ const InventoryManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.oil_type || !formData.quantity || !formData.price_per_litre || !formData.date || !formData.status) {
       Swal.fire('Error', 'All fields are required', 'error');
       return;
@@ -127,23 +150,39 @@ const InventoryManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="bg-gray-50 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Inventory Management</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-        >
-          <Plus size={20} />
-          <span>New Stock</span>
-        </button>
+        <h1 className="text-2xl font-bold">Inventory Information</h1>
+        <div className="flex space-x-4">
+          <button
+            onClick={handleDownloadPDF}
+            className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Download size={20} />
+            <span>Download PDF</span>
+          </button>
+          <button
+            onClick={handlePrint}
+            className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <span>Print</span>
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center space-x-2 bg-yellow-700 text-white px-4 py-2 rounded-lg hover:bg-yellow-800 transition-colors"
+          >
+            <Plus size={20} />
+            <span>New Stock</span>
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      {/* Inventory Table */}
+      <div className="bg-white rounded-lg shadow-sm">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">Weekly Inventory</h2>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" ref={tableRef}>
           {loading ? (
             <div className="text-center py-4">Loading inventory data...</div>
           ) : (
@@ -161,7 +200,7 @@ const InventoryManagement = () => {
                 {stocks.map((stock) => (
                   <tr key={stock.id}>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(stock.date).toLocaleDateString()}
+                      {new Date(stock.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {getOilTypeName(stock.oil_type)}
@@ -170,7 +209,7 @@ const InventoryManagement = () => {
                       {stock.quantity}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      ${Number(stock.price_per_litre).toFixed(2)}
+                      FRW {Number(stock.price_per_litre).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`font-medium ${getStatusColor(stock.status)}`}>
@@ -184,7 +223,6 @@ const InventoryManagement = () => {
           )}
         </div>
       </div>
-
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">

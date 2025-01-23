@@ -81,7 +81,7 @@ const OilManagementTable = () => {
               type="text"
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 w-full md:w-64"
               placeholder="Search oils..."
-              value={searchTerm}
+              value={searchTerm}  
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
@@ -96,7 +96,7 @@ const OilManagementTable = () => {
           </select>
           <button
             onClick={fetchOils}
-            className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            className="flex items-center justify-center px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             <MdRefresh className="mr-2" />
             Refresh

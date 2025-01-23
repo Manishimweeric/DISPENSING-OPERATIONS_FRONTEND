@@ -47,7 +47,7 @@ const LoginPage = () => {
             navigate('/admindashboard'); 
           } else if (role === 'Manager') {
             navigate('/manager/dashboard'); 
-          }else if (role === 'Pump operator') {
+          }else if (role === 'Pumpster') {
               navigate('/operationDashboard');
           } else {
             navigate('/login');
@@ -68,7 +68,7 @@ const LoginPage = () => {
         <div className="w-full md:w-1/2 bg-cover bg-center hidden md:block" style={{ backgroundImage: "url('image/pomp.jpg')", minHeight: '300px' }} />
         <div className="w-full md:w-1/2 flex flex-col justify-center p-6 md:p-12 relative">
           <div className="absolute top-4 right-4">
-            <h1 className="text-xl md:text-2xl font-bold text-green-600">Source OIL</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-yellow-700">Source OIL</h1>
           </div>
           <div className="max-w-md w-full mx-auto">
             <h2 className="text-lg md:text-xl text-center mb-4 md:mb-6">Hello Again!</h2>
@@ -114,7 +114,7 @@ const LoginPage = () => {
             
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-sm font-medium shadow-md hover:shadow-lg"
+                className="w-full bg-yellow-700 text-white py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-yellow-700focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-sm font-medium shadow-md hover:shadow-lg"
               >
                 Login
               </button>

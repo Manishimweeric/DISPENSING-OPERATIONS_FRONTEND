@@ -17,7 +17,7 @@ const PumpOperatorPage = () => {
         
         // Filter pump operators by station
         const filteredData = data
-          .filter(operator => operator.role === 'Pump operator' && operator.station.id === userStationId)
+          .filter(operator => operator.role === 'Pumpster' && operator.station.id === userStationId)
           .map(operator => ({
             name: operator.name,
             phone_number: operator.phone_number,
@@ -37,7 +37,7 @@ const PumpOperatorPage = () => {
   }, [userStationId]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className=" bg-gray-50 p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Pump Operator Management</h1>
       </div>

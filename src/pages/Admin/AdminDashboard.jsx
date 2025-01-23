@@ -43,12 +43,12 @@ const ManagerDashboard = () => {
         <nav className="space-y-4">
           {[
             { name: 'Dashboard', icon: BarChart2, path: '/admindashboard/dashboard' },
-            { name: 'User Management', icon: Droplet, path: '/admindashboard/users' },
-            { name: 'Signup', icon: Droplet, path: '/admindashboard/signup' },
+            { name: 'User Management', icon: Users, path: '/admindashboard/users' },
+            { name: 'Signup', icon: Users, path: '/admindashboard/signup' },
             { name: 'Maintenance', icon: Clock, path: '/admindashboard/' },
             { name: 'Stations', icon: Users, isDropdown: true },
-            { name: 'Oil', icon: Users, isDropdown: true },
-            { name: 'Settings', icon: Settings, path: '/admindashboard/' },
+            { name: 'Oil', icon:Droplet, isDropdown: true },
+            { name: 'Calibration', icon: Settings, path: '/admindashboard/' },
           ].map((item) => (
             <div key={item.name}>
               <div

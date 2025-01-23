@@ -38,7 +38,7 @@ const StationRegistrationForm = () => {
 
       if (response.ok) {
         Swal.fire('Success', 'Station registered successfully!', 'success').then(() => {
-          navigate('/stations');
+          
         });
       } else {
         Swal.fire('Error', data.detail || 'Unable to register station', 'error');

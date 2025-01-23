@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { MdEdit, MdDelete, MdSearch, MdRefresh } from 'react-icons/md';
+import { MdEdit, MdDelete, MdSearch, MdRefresh, MdPrint } from 'react-icons/md';
 import { Link } from "react-router-dom";
 import { MdAdd } from "react-icons/md";
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
@@ -64,6 +66,23 @@ const UserManagementTable = () => {
     }
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text('User Management Report', 14, 10);
+    doc.autoTable({
+      startY: 20,
+      head: [['Name', 'Email', 'Phone', 'Role', 'Status']],
+      body: users.map(user => [
+        user.name,
+        user.email,
+        user.phone_number,
+        user.role,
+        user.is_active ? 'Active' : 'Inactive',
+      ]),
+    });
+    doc.save('user_management_report.pdf');
+  };
+
   const filteredUsers = users.filter(user => {
     const roleMatch = selectedRole === 'all' || user.role === selectedRole;
     const searchMatch = 
@@ -76,7 +95,7 @@ const UserManagementTable = () => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">User Management</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Employee Informations</h2>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -102,18 +121,25 @@ const UserManagementTable = () => {
           </select>
           <button
             onClick={fetchUsers}
-            className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            className="flex items-center justify-center px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             <MdRefresh className="mr-2" />
             Refresh
           </button>
-          <Link
-            to="/admindashboard/signup" // Replace with the correct route for adding a user
-            className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          {/* <Link
+            to="/admindashboard/signup"
+            className="flex items-center justify-center px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             <MdAdd className="mr-2" />
             Add User
-            </Link>
+          </Link> */}
+          <button
+            onClick={generatePDF}
+            className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            <MdPrint className="mr-2" />
+            Download PDF
+          </button>
         </div>
       </div>
 
