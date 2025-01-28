@@ -58,83 +58,84 @@ const DashboardPage = () => {
     fetchSummaryData();
   }, []);
 
+  // Ensure chartData is populated before rendering
+  if (loading || chartData.length === 0) {
+    return <p className="text-center text-xl font-semibold">Loading...</p>;
+  }
+
   return (
     <div className="w-full h-full px-6 py-4">
-      {loading ? (
-        <p className="text-center text-xl font-semibold">Loading...</p>
-      ) : (
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Dashboard Overview</h2>
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Dashboard Overview</h2>
 
-          {/* Flex Grid for Bar Chart and Pumpsters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Flex Grid for Bar Chart and Pumpsters */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {/* Bar Chart Section */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">
-                Total Numbers of Customers, Pumpsters, and Inventory
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#8884d8" name="Count" />
-                </BarChart>
-              </ResponsiveContainer>
+          {/* Bar Chart Section */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">
+              Total Numbers of Customers, Pumpsters, and Inventory
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8884d8" name="Count" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+              <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">Pumpsters</h3>
+              {pumpsters.length > 0 ? (
+                <table className="min-w-full table-auto">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="py-2 px-4 text-left text-gray-600">Name</th>
+                      <th className="py-2 px-4 text-left text-gray-600">Phone</th>
+                      <th className="py-2 px-4 text-left text-gray-600">Registered</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pumpsters.map((pumpster) => (
+                      <tr key={pumpster.id} className="border-b hover:bg-gray-50">
+                        <td className="py-2 px-4 text-gray-700">{pumpster.name}</td>
+                        <td className="py-2 px-4 text-gray-600">{pumpster.phone_number}</td>
+                        <td className="py-2 px-4 text-gray-600">
+                          {new Date(pumpster.created_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-gray-500 text-center">No pumpsters available.</p>
+              )}
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-                <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">Pumpsters</h3>
-                {pumpsters.length > 0 ? (
-                  <table className="min-w-full table-auto">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="py-2 px-4 text-left text-gray-600">Name</th>
-                        <th className="py-2 px-4 text-left text-gray-600">Phone</th>
-                        <th className="py-2 px-4 text-left text-gray-600">Registered</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pumpsters.map((pumpster) => (
-                        <tr key={pumpster.id} className="border-b hover:bg-gray-50">
-                          <td className="py-2 px-4 text-gray-700">{pumpster.name}</td>
-                          <td className="py-2 px-4 text-gray-600">{pumpster.phone_number}</td>
-                          <td className="py-2 px-4 text-gray-600">
-                            {new Date(pumpster.created_at).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="text-gray-500 text-center">No pumpsters available.</p>
-                )}
-              </div>
-
-          </div>
-
-          {/* Summary Stats (Hello Cards Section) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Cards */}
-            {['Customers', 'Pumpsters', 'Inventory'].map((category, idx) => (
-              <div
-                key={idx}
-                className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="text-center mb-4">
-                  <span className="text-4xl font-bold text-gray-700">{category}</span>
-                </div>
-                <p className="text-lg font-semibold text-center text-gray-800">
-                  {category === 'Customers' ? chartData[0].count : category === 'Pumpsters' ? chartData[1].count : chartData[2].count}
-                </p>
-                <p className="text-center text-gray-600 mt-2">{category} Count</p>
-              </div>
-            ))}
-          </div>
         </div>
-      )}
+
+        {/* Summary Stats (Hello Cards Section) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Cards */}
+          {['Customers', 'Pumpsters', 'Inventory'].map((category, idx) => (
+            <div
+              key={idx}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="text-center mb-4">
+                <span className="text-4xl font-bold text-gray-700">{category}</span>
+              </div>
+              <p className="text-lg font-semibold text-center text-gray-800">
+                {category === 'Customers' ? chartData[0].count : category === 'Pumpsters' ? chartData[1].count : chartData[2].count}
+              </p>
+              <p className="text-center text-gray-600 mt-2">{category} Count</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

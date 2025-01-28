@@ -28,7 +28,7 @@ const App = () => {
                 </p>
               </div>
               <Link to="/login">
-                <button className="bg-green-500 mt-5 text-white px-8 py-3 text-lg rounded-full hover:bg-green-600 transition-colors duration-200 shadow-md hover:shadow-lg">
+                <button className="bg-yellow-600 mt-5 text-white px-8 py-3 text-lg rounded-full hover:bg-green-600 transition-colors duration-200 shadow-md hover:shadow-lg">
                   Login →
                 </button>
               </Link>

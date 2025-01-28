@@ -13,6 +13,7 @@ const UserManagementTable = () => {
   const [loading, setLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [stations, setStations] = useState([]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -32,39 +33,28 @@ const UserManagementTable = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleDeleteUser = async (userId) => {
+  const fetchStations = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      });
-
-      if (result.isConfirmed) {
-        const response = await fetch(`${API_URL}/users/${userId}/`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          Swal.fire('Deleted!', 'User has been deleted.', 'success');
-          fetchUsers();
-        } else {
-          Swal.fire('Error', 'Failed to delete user', 'error');
-        }
-      }
+      const response = await fetch(`${API_URL}/stations/`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to fetch stations');
+      setStations(data);
     } catch (error) {
-      console.error('Error deleting user:', error);
-      Swal.fire('Error', 'Failed to delete user', 'error');
+      console.error('Error fetching stations:', error);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+    fetchStations();
+  }, []);
+
+
+  const getStationName = (stationId) => {
+    const station = stations.find((s) => s.id === parseInt(stationId));
+    return station ? station.name : 'Unknown';
+};
+
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -116,8 +106,8 @@ const UserManagementTable = () => {
           >
             <option value="all">All Roles</option>
             <option value="admin">Admin</option>
-            <option value="manager">Manager</option>
-            <option value="user">User</option>
+            <option value="Manager">Manager</option>
+            <option value="Pumpster">Pumpster</option>
           </select>
           <button
             onClick={fetchUsers}
@@ -126,13 +116,13 @@ const UserManagementTable = () => {
             <MdRefresh className="mr-2" />
             Refresh
           </button>
-          {/* <Link
+          <Link
             to="/admindashboard/signup"
             className="flex items-center justify-center px-4 py-2 bg-yellow-700 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             <MdAdd className="mr-2" />
-            Add User
-          </Link> */}
+            Add Employee
+          </Link>
           <button
             onClick={generatePDF}
             className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -145,14 +135,16 @@ const UserManagementTable = () => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 text-center">
             <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Station</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -165,8 +157,9 @@ const UserManagementTable = () => {
                 <td colSpan="6" className="text-center py-4">No users found</td>
               </tr>
             ) : (
-              filteredUsers.map((user) => (
+              filteredUsers.map((user,index) => (
                 <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>  {/* Display count */}
                   <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.phone_number}</td>
@@ -178,25 +171,16 @@ const UserManagementTable = () => {
                       {user.role}
                     </span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{getStationName(user.station)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                       ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {user.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
-                      onClick={() => {/* Add edit handler */}}
-                    >
-                      <MdEdit className="h-5 w-5" />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-900"
-                      onClick={() => handleDeleteUser(user.id)}
-                    >
-                      <MdDelete className="h-5 w-5" />
-                    </button>
+                  {user.created_at}
                   </td>
                 </tr>
               ))

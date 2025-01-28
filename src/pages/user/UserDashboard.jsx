@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
-import { Menu, X, Clock, BarChart2, Droplet, Users, Settings, ChevronDown,LogOut } from 'lucide-react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Menu, X, Clock, BarChart2, Droplet, Users, Settings, ChevronDown, LogOut } from 'lucide-react';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 const ManagerDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Use this hook to get the current location/path
 
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
   };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const isActive = (path) => {
+    return location.pathname === path ? 'bg-blue-600' : ''; // Highlight the active item
   };
 
   return (
@@ -43,12 +49,14 @@ const ManagerDashboard = () => {
             { name: 'Orders', icon: Clock, path: '/manager/orders' },
             { name: 'Customers', icon: Users, path: '/manager/customers' },
             { name: 'Pump Operators', icon: Users, path: '/manager/operators' },
-            { name: 'Settings', icon: Settings, path: '/manager/settings' },
+            { name: 'Calibration', icon: Users, path: '/manager/calibrationUser' },
+            { name: 'Maintenance', icon: Users, path: '/manager/maintenanceUser' },
+            { name: 'Home', icon: Settings, path: '/manager/HomeApp' },
           ].map((item) => (
             <Link
               key={item.name}
               to={item.path}
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200 ${isActive(item.path)}`}
             >
               <item.icon className="h-5 w-5 text-yellow-100" />
               <span className="text-yellow-50">{item.name}</span>
@@ -75,16 +83,15 @@ const ManagerDashboard = () => {
               <ChevronDown />
             </button>
             {isDropdownOpen && (
-             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-20 animate-fadeIn">
-             <button
-               onClick={handleLogout}
-               className="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-             >
-               <LogOut className="h-5 w-5 text-gray-600" />
-               <span>Logout</span>
-             </button>
-           </div>
-           
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-20 animate-fadeIn">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
+                  <LogOut className="h-5 w-5 text-gray-600" />
+                  <span>Logout</span>
+                </button>
+              </div>
             )}
           </div>
         </header>

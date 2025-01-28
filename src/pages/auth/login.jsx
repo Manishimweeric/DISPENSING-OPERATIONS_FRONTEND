@@ -38,13 +38,14 @@ const LoginPage = () => {
 
       if (response.ok) {
         const role = data.user.role;   
-        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('token', data.access_token);
         localStorage.setItem('role', role);
         localStorage.setItem("user", JSON.stringify(data));
         localStorage.setItem('user_id', data.user.id);
+        localStorage.setItem('station', data.user.station);
         Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
           if (role === 'admin') {
-            navigate('/admindashboard'); 
+            navigate('/admindashboard/dashboard'); 
           } else if (role === 'Manager') {
             navigate('/manager/dashboard'); 
           }else if (role === 'Pumpster') {

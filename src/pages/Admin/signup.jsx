@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-
+import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const SignUp = () => {
@@ -15,7 +15,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [stations, setStations] = useState([]);
   const [roles] = useState(['Manager', 'Pumpster']);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -47,7 +47,10 @@ const SignUp = () => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Registration failed');
-      Swal.fire('Success!', 'Registration successful!', 'success');
+
+      Swal.fire('Success', 'Thank you for Registering Employee!!', 'success').then(() => {
+        navigate('/admindashboard/users'); // Redirect to calibration list or desired page
+      });
     } catch (err) {
       Swal.fire('Error!', err.message || 'Something went wrong', 'error');
     } finally {

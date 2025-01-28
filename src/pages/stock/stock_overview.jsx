@@ -11,36 +11,40 @@ const InventoryManagement = () => {
   const [oilTypes, setOilTypes] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedModal, setSelectedModal] = useState();
+  const [quantity, setQuantity] = useState('')
+  const[price, setPrice] = useState('');
   const [formData, setFormData] = useState({
     oil_type: '',
     quantity: '',
     price_per_litre: '',
     date: '',
-    status: '',
   });
   const tableRef = useRef();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [oilTypesResponse, stocksResponse] = await Promise.all([
-          fetch(`${API_URL}/oiltypes/`),
-          fetch(`${API_URL}/stocks/`)
-        ]);
 
-        const oilTypesData = await oilTypesResponse.json();
-        const stocksData = await stocksResponse.json();
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [oilTypesResponse, stocksResponse] = await Promise.all([
+        fetch(`${API_URL}/oiltypes/`),
+        fetch(`${API_URL}/stocks/`)
+      ]);
 
-        setOilTypes(oilTypesData);
-        setStocks(stocksData);
-      } catch (error) {
-        console.error('Failed to fetch data', error);
-        Swal.fire('Error', 'Failed to load inventory data', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
+      const oilTypesData = await oilTypesResponse.json();
+      const stocksData = await stocksResponse.json();
+
+      setOilTypes(oilTypesData);
+      setStocks(stocksData);
+    } catch (error) {
+      console.error('Failed to fetch data', error);
+      Swal.fire('Error', 'Failed to load inventory data', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {  
 
     fetchData();
   }, []);
@@ -79,6 +83,15 @@ const InventoryManagement = () => {
     }
   };
 
+  const handleViewDetails = (stock) => {
+    setSelectedModal(stock);
+    setPrice(stock.price_per_litre);
+  };
+  const closeModal = () => {
+    setSelectedModal(null);
+  };
+
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -86,7 +99,7 @@ const InventoryManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.oil_type || !formData.quantity || !formData.price_per_litre || !formData.date || !formData.status) {
+    if (!formData.oil_type || !formData.quantity || !formData.price_per_litre || !formData.date) {
       Swal.fire('Error', 'All fields are required', 'error');
       return;
     }
@@ -135,6 +148,74 @@ const InventoryManagement = () => {
     const oilType = oilTypes.find(type => type.id === parseInt(oilTypeId));
     return oilType ? oilType.name : 'Unknown';
   };
+
+
+  const handleStockSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!quantity) {
+        Swal.fire({
+            title: 'Validation Error',
+            text: 'Please fill in all the required fields.',
+            icon: 'error',
+            confirmButtonText: 'Okay',
+        });
+        return;
+    }
+
+    const updatedQuantity = parseInt(selectedModal.quantity, 10) + parseInt(quantity, 10);
+
+    const StockData = {
+      quantity:updatedQuantity,
+      price_per_litre:price
+    };
+
+    console.log(StockData);
+
+    try {
+        const response = await fetch(`${API_URL}/Stocks/${selectedModal.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(StockData),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            Swal.fire({
+                title: 'Error',
+                text: responseData.error || 'Error adding Stock. Please try again.',
+                icon: 'info',
+                confirmButtonText: 'Oxkay',
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Success!',
+            text: 'Thank you for Replenishment Your Stock.',
+            icon: 'success',
+            confirmButtonText: 'Great',
+        });
+
+        setPrice('');
+        setQuantity('');
+        fetchData();
+        closeModal();
+    } catch (error) {
+        console.error('Error adding maintenance:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Error adding maintenance. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'Okay',
+        });
+    }
+};
+
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -186,35 +267,34 @@ const InventoryManagement = () => {
           {loading ? (
             <div className="text-center py-4">Loading inventory data...</div>
           ) : (
-            <table className="w-full">
+            <table className="w-full text-center">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Date</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Oil Type</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Quantity (L)</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Price/L</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">#</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Date</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Oil Type</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Quantity (L)</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Price/L</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Status</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {stocks.map((stock) => (
+                {stocks.map((stock, index) => (
                   <tr key={stock.id}>
+                    <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{new Date(stock.created_at).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{getOilTypeName(stock.oil_type)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{stock.quantity} Ltr</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">FRW {Number(stock.price_per_litre).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-md"><span className={`font-medium ${getStatusColor(stock.status)}`}>{stock.status}</span></td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(stock.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {getOilTypeName(stock.oil_type)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {stock.quantity}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      FRW {Number(stock.price_per_litre).toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`font-medium ${getStatusColor(stock.status)}`}>
-                        {stock.status}
-                      </span>
+                    <button
+                      onClick={() => handleViewDetails(stock)}
+                      className="mr-2 bg-yellow-700 text-white py-1 px-3 rounded hover:bg-yellow-700"
+                    >
+                      Replenishment
+                    </button>
                     </td>
                   </tr>
                 ))}
@@ -235,10 +315,10 @@ const InventoryManagement = () => {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Oil Type</label>
-                <select 
-                  name="oil_type" 
-                  value={formData.oil_type} 
-                  onChange={handleOilTypeChange} 
+                <select
+                  name="oil_type"
+                  value={formData.oil_type}
+                  onChange={handleOilTypeChange}
                   className="w-full border rounded-lg p-2"
                 >
                   <option value="">Select Oil Type</option>
@@ -251,47 +331,33 @@ const InventoryManagement = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (L)</label>
-                <input 
-                  type="number" 
-                  name="quantity" 
-                  value={formData.quantity} 
-                  onChange={handleChange} 
-                  className="w-full border rounded-lg p-2" 
+                <input
+                  type="number"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className="w-full border rounded-lg p-2"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Price per Litre</label>
-                <input 
-                  type="text" 
-                  name="price_per_litre" 
-                  value={formData.price_per_litre} 
-                  onChange={handleChange} 
-                  className="w-full border rounded-lg p-2" 
+                <input
+                  type="text"
+                  name="price_per_litre"
+                  value={formData.price_per_litre}
+                  onChange={handleChange}
+                  className="w-full border rounded-lg p-2"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input 
-                  type="date" 
-                  name="date" 
-                  value={formData.date} 
-                  onChange={handleChange} 
-                  className="w-full border rounded-lg p-2" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select 
-                  name="status" 
-                  value={formData.status} 
-                  onChange={handleChange} 
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
                   className="w-full border rounded-lg p-2"
-                >
-                  <option value="">Select Status</option>
-                  <option value="In Stock">In Stock</option>
-                  <option value="Low Stock">Low Stock</option>
-                  <option value="Out of Stock">Out of Stock</option>
-                </select>
+                />
               </div>
               <div className="flex justify-end space-x-3 pt-4">
                 <button
@@ -306,6 +372,59 @@ const InventoryManagement = () => {
                   className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                 >
                   Add Stock
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {selectedModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
+            <h3 className="text-2xl font-semibold text-gray-600 mb-6">Replenishment Quantity</h3>
+            <form onSubmit={handleStockSubmit} >
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="text-gray-700 font-medium">Quantity</label>
+                  <input 
+                    type="number"
+                    name="quantity"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    required
+                    className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                    placeholder="Enter Quantity"
+                  />
+                </div>
+              </div>
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="text-gray-700 font-medium">Price (Option *)| RWF</label>
+                  <input 
+                    type="number"
+                    name="price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                    className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
+                    placeholder="Enter Price"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-4 mt-6">
+                <button
+                  onClick={closeModal}
+                  type="button"
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Replenishment
                 </button>
               </div>
             </form>

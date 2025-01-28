@@ -51,10 +51,6 @@ const StationRegistrationForm = () => {
 
   return (
     <div className="flex items-center justify-center h-full w-full mt-60 bg-gray-100">
-       
-          <div className="absolute top-4 right-4">
-            <h1 className="text-xl md:text-2xl font-bold text-green-600">Source OIL</h1>
-          </div>
           <div className="w-full max-w-2xl mx-auto">
               <h2 className="text-lg md:text-2xl mb-4 md:mb-6 flex items-center">
                 <MdAdd className="text-xl md:text-2xl mr-2" />
