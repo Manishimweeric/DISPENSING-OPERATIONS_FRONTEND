@@ -248,7 +248,7 @@ const CalibrationList = () => {
                         {/* Report Content */}
                         <div className="space-y-4 mb-6">
                             <div>
-                                <p className="text-gray-700 font-medium"><strong>Report:</strong></p>
+                                <p className="text-gray-700 font-medium mb-5"><strong>Report From manager :</strong></p>
                                 <p className="text-gray-600">{selectedCalibration.report || 'No report available'}</p>
                             </div>
                             <div>

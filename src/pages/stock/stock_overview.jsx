@@ -16,7 +16,7 @@ const InventoryManagement = () => {
   const[price, setPrice] = useState('');
   const [formData, setFormData] = useState({
     oil_type: '',
-    quantity: '',
+    quantity: 0,
     price_per_litre: '',
     date: '',
   });
@@ -153,17 +153,7 @@ const InventoryManagement = () => {
   const handleStockSubmit = async (e) => {
     e.preventDefault();
 
-    if (!quantity) {
-        Swal.fire({
-            title: 'Validation Error',
-            text: 'Please fill in all the required fields.',
-            icon: 'error',
-            confirmButtonText: 'Okay',
-        });
-        return;
-    }
-
-    const updatedQuantity = parseInt(selectedModal.quantity, 10) + parseInt(quantity, 10);
+    const updatedQuantity = parseInt(selectedModal.quantity, 10) + parseInt(quantity, 0);
 
     const StockData = {
       quantity:updatedQuantity,
@@ -391,7 +381,6 @@ const InventoryManagement = () => {
                     name="quantity"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    required
                     className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
                     placeholder="Enter Quantity"
                   />

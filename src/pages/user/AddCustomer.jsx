@@ -13,6 +13,7 @@ const CustomerRegistrationForm = () => {
     name: '',
     phoneNumber: '',
     location: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -35,10 +36,10 @@ const CustomerRegistrationForm = () => {
     const user_id = localStorage.getItem("user_id");
   
     // Destructure formData
-    const { name, phoneNumber, location } = formData;
+    const { name, phoneNumber, location,email } = formData;
   
     // Check if required fields are filled
-    if (!name || !phoneNumber || !location) {
+    if (!name || !phoneNumber || !location || !email) {
       Swal.fire('Error', 'All fields are required', 'error');
       return;
     }
@@ -50,7 +51,8 @@ const CustomerRegistrationForm = () => {
         Phonenumber: phoneNumber,
         location,
         user: user_id,
-        quantity:0
+        quantity:0,
+        email: email
       };
   
       const response = await fetch(`${API_URL}/api/customers/`, {
@@ -107,6 +109,18 @@ const CustomerRegistrationForm = () => {
               onChange={handleChange}
               className="block w-full mt-1 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
               placeholder="Enter Phone Number"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="phoneNumber" className="block text-sm font-medium">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="EMAIL"
+              value={formData.email}
+              onChange={handleChange}
+              className="block w-full mt-1 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
+              placeholder="Enter Email Address"
             />
           </div>
           <div className="mb-4">

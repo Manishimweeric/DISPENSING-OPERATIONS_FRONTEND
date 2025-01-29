@@ -25,38 +25,40 @@ const InventoryManagement = () => {
     return oilType ? oilType.name : 'Unknown';
   };
 
+  
+  const fetchData = async () => {
+    const user_id = parseInt(localStorage.getItem('user_id'));
+    try {
+      setLoading(true);
+      const [customersResponse, oilTypesResponse] = await Promise.all([
+        fetch(`${API_URL}/customers/`),
+        fetch(`${API_URL}/oiltypes/`),
+      ]);
+
+      const customersDatas = await customersResponse.json();
+
+      const customersData = customersDatas.filter(customer => {
+        return customer.user == user_id;
+      });
+
+
+      const oilTypesData = await oilTypesResponse.json();
+
+      // Assuming 'quantity' is the field you want to order by
+      const sortedCustomers = customersData.sort((a, b) => b.quantity - a.quantity);
+
+      setCustomers(sortedCustomers); // Set the sorted data
+      setOilTypes(oilTypesData);
+    } catch (error) {
+      console.error('Failed to fetch data', error);
+      Swal.fire('Error', 'Failed to load customer data', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
-
-    const fetchData = async () => {
-      const user_id = parseInt(localStorage.getItem('user_id'));
-      try {
-        setLoading(true);
-        const [customersResponse, oilTypesResponse] = await Promise.all([
-          fetch(`${API_URL}/customers/`),
-          fetch(`${API_URL}/oiltypes/`),
-        ]);
-
-        const customersDatas = await customersResponse.json();
-
-        const customersData = customersDatas.filter(customer => {
-          return customer.user == user_id;
-        });
-
-
-        const oilTypesData = await oilTypesResponse.json();
-
-        // Assuming 'quantity' is the field you want to order by
-        const sortedCustomers = customersData.sort((a, b) => b.quantity - a.quantity);
-
-        setCustomers(sortedCustomers); // Set the sorted data
-        setOilTypes(oilTypesData);
-      } catch (error) {
-        console.error('Failed to fetch data', error);
-        Swal.fire('Error', 'Failed to load customer data', 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchData();
   }, []);
@@ -118,9 +120,82 @@ const InventoryManagement = () => {
     }
   };
 
-  const handleAddDiscount = (customerId) => {
-    console.log(`Adding discount for customer ID: ${customerId}`);
+  const handleAddDiscount = async (customer) => {
+    try {
+      const confirmation = await Swal.fire({
+        icon: "warning",
+        title: "Are you sure?",
+        text: `Do you want to apply a discount to ${customer.name}? This will reduce their quantity by 10,000.`,
+        showCancelButton: true,
+        confirmButtonText: "Yes, apply discount",
+        cancelButtonText: "No, cancel",
+      });
+  
+      if (!confirmation.isConfirmed) {
+        return; // Exit if user cancels
+      }
+  
+      if (!customer || typeof customer.quantity === "undefined") {
+        throw new Error("Invalid customer data");
+      }
+  
+      const currentQuantity = parseInt(customer.quantity, 10);
+      if (isNaN(currentQuantity)) {
+        throw new Error("Invalid quantity value");
+      }
+  
+      const updatedQuantity = Math.max(currentQuantity - 10000, 0); // Prevent negative quantity
+
+
+      const response = await fetch(`${API_URL}/send-email/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: customer.email }), // Set recipient email
+      });
+
+  
+      const updateResponse = await fetch(`${API_URL}/customersdata/${customer.id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quantity: updatedQuantity,
+          cdiscount: "taken",
+          status: "2",
+        }),
+      });
+  
+      if (!updateResponse.ok) {
+        const errorMessage = await updateResponse.text();
+        throw new Error(`Failed to update: ${errorMessage}`);
+      }
+  
+      await Swal.fire({
+        icon: "success",
+        title: "Customer Updated",
+        text: `Thank you for adding a discount to ${customer.name}! Your remaining quantity is now ${updatedQuantity} Ltr.`,
+        confirmButtonText: "OK",
+      });
+  
+      if (typeof fetchData === "function") {
+        fetchData(); // Refresh data after update
+      }
+  
+    } catch (error) {
+      console.error("Error:", error.message);
+  
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "An error occurred while processing the request.",
+        confirmButtonText: "OK",
+      });
+    }
   };
+  
 
   // Download PDF Functionality
   const handleDownloadPDF = () => {
@@ -232,7 +307,7 @@ const InventoryManagement = () => {
                         View Detail
                       </button>
                       <button
-                        onClick={() => handleAddDiscount(customer.id)}
+                        onClick={() => handleAddDiscount(customer)}
                         className={`px-4 py-2 text-white rounded-md  ${customer.quantity >= 10000 ? 'bg-green-500 rounded-md hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}`}
                         disabled={customer.quantity < 10000}
                       >

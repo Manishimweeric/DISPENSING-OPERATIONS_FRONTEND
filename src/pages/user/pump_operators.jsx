@@ -39,31 +39,33 @@ const PumpOperatorPage = () => {
   return (
     <div className=" bg-gray-50 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Pump Operator Management</h1>
+        <h1 className="text-2xl font-bold mb-10">Pump Operator Management</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="p-4 border-b">
-          <h2 className="text-lg font-semibold">Pump Operator List</h2>
-        </div>
+        
         <div className="overflow-x-auto">
           {loading ? (
             <div className="text-center py-4">Loading pump operator data...</div>
           ) : (
-            <table className="w-full">
+            <table className="w-full text-center">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Phone Number</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Email</th>
+                  <th className="px-6 py-3  text-sm font-medium text-gray-500">#</th>
+                  <th className="px-6 py-3 text-sm font-medium text-gray-500">Name</th>
+                  <th className="px-6 py-3 text-sm font-medium text-gray-500">Phone Number</th>
+                  <th className="px-6 py-3 text-sm font-medium text-gray-500">Email</th>
+               
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {pumpOperators.map((operator, index) => (
                   <tr key={index}>
+                    <td className="px-6 py-4 text-sm text-gray-900">{index + 1 }</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{operator.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{operator.phone_number}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{operator.email}</td>
+
                   </tr>
                 ))}
               </tbody>
