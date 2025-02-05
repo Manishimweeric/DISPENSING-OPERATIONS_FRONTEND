@@ -21,7 +21,9 @@ const UserManagementTable = () => {
       const response = await fetch(`${API_URL}/users/`);
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        // Filter out users with the role 'Admin'
+        const filteredUsers = data.filter(user => user.role !== 'admin');
+        setUsers(filteredUsers);
       } else {
         Swal.fire('Error', 'Failed to fetch users', 'error');
       }
@@ -32,6 +34,7 @@ const UserManagementTable = () => {
       setLoading(false);
     }
   };
+  
 
   const fetchStations = async () => {
     try {
@@ -56,22 +59,64 @@ const UserManagementTable = () => {
 };
 
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.text('User Management Report', 14, 10);
-    doc.autoTable({
-      startY: 20,
-      head: [['Name', 'Email', 'Phone', 'Role', 'Status']],
-      body: users.map(user => [
-        user.name,
-        user.email,
-        user.phone_number,
-        user.role,
-        user.is_active ? 'Active' : 'Inactive',
-      ]),
-    });
-    doc.save('user_management_report.pdf');
-  };
+const generatePDF = () => {
+  const doc = new jsPDF();
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text('Employees Management Report', doc.internal.pageSize.width / 2, 15, { align: 'center' });
+
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text('Generated on: ' + new Date().toLocaleString(), doc.internal.pageSize.width / 2, 25, { align: 'center' });
+
+  doc.setDrawColor(0, 0, 0); 
+  doc.setLineWidth(0.5);
+  doc.line(15, 30, doc.internal.pageSize.width - 15, 30);
+
+
+  doc.autoTable({
+    startY: 40,
+    head: [['Name', 'Email', 'Phone', 'Role', 'Status']], 
+    body: users.map(user => [
+      user.name,
+      user.email,
+      user.phone_number,
+      user.role,
+      user.is_active ? 'Active' : 'Inactive',
+    ]),
+    theme: 'striped', 
+    styles: {
+      font: 'helvetica', 
+      fontSize: 10, 
+      cellPadding: 3,
+      halign: 'center', 
+      valign: 'middle', 
+      lineWidth: 0.5, 
+    },
+    headStyles: {
+      fillColor: [52, 152, 219],
+      textColor: 255,
+      fontSize: 12, 
+      fontStyle: 'bold', 
+    },
+    alternateRowStyles: {
+      fillColor: [236, 240, 241], 
+    },
+    margin: { top: 40, left: 15, right: 15 }, 
+  });
+
+  const finalY = doc.lastAutoTable.finalY + 10; 
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text('Prepared by Source Oil', 15, finalY);
+  const pageCount = doc.internal.pages.length;
+  doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of ${pageCount}`, doc.internal.pageSize.width - 15, doc.internal.pageSize.height - 10, { align: 'right' });
+
+  doc.save('Employee_report.pdf');
+};
+
 
   const filteredUsers = users.filter(user => {
     const roleMatch = selectedRole === 'all' || user.role === selectedRole;
@@ -83,7 +128,7 @@ const UserManagementTable = () => {
   });
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-3 mt-10 bg-white rounded-lg shadow-lg">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Employee Informations</h2>
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">

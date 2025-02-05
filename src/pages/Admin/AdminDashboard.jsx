@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { Menu, X, Clock, BarChart2, Droplet, Users, Settings, ChevronDown } from 'lucide-react';
+import { Home, MapPin, Sliders, ClipboardList, UserCheck, Users, ChevronDown, Droplet, Menu, X } from 'lucide-react';
+
+
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,12 +44,16 @@ const AdminLayout = () => {
         {/* Sidebar Navigation */}
         <nav className="space-y-4">
           {[
-            { name: 'Dashboard', icon: BarChart2, path: '/admindashboard/dashboard' },
-            { name: 'Stations', icon: Users, isDropdown: true },
-            { name: 'Oil', icon: Droplet, isDropdown: true },
-            { name: 'Calibration', icon: Settings, path: '/admindashboard/calibration' },
-            { name: 'Maintenance Schedures', icon: Settings, path: '/admindashboard/maintanenceList' },
-            { name: 'Employee Management', icon: Users, path: '/admindashboard/users' },
+              { name: 'Dashboard', icon: Home, path: '/admindashboard/dashboard' },
+              { name: 'Stations', icon: MapPin, isDropdown: true },
+              { name: 'Oil', icon: Droplet, isDropdown: true },
+              { name: 'Orders Management', icon: ClipboardList, path: '/admindashboard/orderManagement' },
+              { name: 'Calibration', icon: Sliders, path: '/admindashboard/calibration' },
+              { name: 'Maintenance Schedules', icon: Sliders, path: '/admindashboard/maintanenceList' },
+              { name: 'Customers', icon: UserCheck, path: '/admindashboard/customerList' },
+              { name: 'Employee Management', icon: Users, path: '/admindashboard/users' },
+              { name: 'Support Message', icon: ClipboardList, path: '/admindashboard/supportList' }
+              
           ].map((item) => (
             <div key={item.name}>
               {!item.isDropdown ? (

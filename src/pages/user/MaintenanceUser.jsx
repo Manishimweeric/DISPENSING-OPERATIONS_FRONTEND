@@ -19,6 +19,7 @@ const CalibrationList = () => {
     const [selectedCalibrations, setSelectedCalibrations] = useState(null);
     const [maintainer, setMaintainer] = useState('');
     const [Report, setReport] = useState('');
+    const userStationId = localStorage.getItem('station'); 
 
     const fetchData = async () => {
         try {
@@ -30,8 +31,7 @@ const CalibrationList = () => {
 
             const calibrationsData = await calibrationsResponse.json();
             const stationsData = await stationsResponse.json();
-
-            setCalibrations(calibrationsData);
+            setCalibrations(calibrationsData.filter((data) =>data.station == userStationId ));
             setStations(stationsData);
         } catch (error) {
             console.error('Failed to fetch data', error);

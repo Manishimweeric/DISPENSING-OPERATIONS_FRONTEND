@@ -163,8 +163,8 @@ const Dashboard = () => {
           {/* Cards Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold">Total Sales</h3>
-              <p className="text-2xl font-bold">${stats.total_sales}</p>
+              <h3 className="text-lg font-semibold">Total Users</h3>
+              <p className="text-2xl font-bold">{stats.total_user}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold">Total Customers</h3>
@@ -194,19 +194,23 @@ const Dashboard = () => {
             <table className="w-full">
               <thead>
                 <tr>
+                <th className="text-left">#</th>
                   <th className="text-left">Name</th>
-                  <th className="text-left">Plate Number</th>
+                  <th className="text-left">Phone Number</th>
                   <th className="text-left">Quantity</th>
-                  <th className="text-left">Oil Type</th>
+                  <th className="text-left">Email</th>
+                  <th className="text-left">Address</th>
                 </tr>
               </thead>
               <tbody>
-                {stats.recent_customers.map((customer, index) => (
+                {stats.recent_customers.slice(0, 2).map((customer, index) => (
                   <tr key={index} className="border-b">
+                    <td className="py-2">{index + 1}</td>
                     <td className="py-2">{customer.name}</td>
-                    <td className="py-2">{customer.plate_number}</td>
+                    <td className="py-2">{customer.Phonenumber}</td>
                     <td className="py-2">{customer.quantity}</td>
-                    <td className="py-2">{customer.oil_type__name}</td>
+                    <td className="py-2">{customer.email}</td>
+                    <td className="py-2">{customer.location}</td>
                   </tr>
                 ))}
               </tbody>

@@ -26,7 +26,11 @@ import MaintanenceList from './pages/Admin/MaintenanceList';
 import AddCustomer from './pages/user/AddCustomer';
 import CalibrationUser from './pages/user/CalibrationUser';
 import MaintenanceUser from './pages/user/MaintenanceUser';
-
+import CustomerDashboard from './pages/Customer/CustomerDashboard';
+import CustomerList from './pages/Admin/CustomerList';
+import SupportList from './pages/Admin/SupportList';
+import OrderList from './pages/user/OrderList';
+import OrderManagement from './pages/Admin/OrderManagement';
 
 
 
@@ -34,12 +38,12 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/signup" element={<div><Navigation /><Signup />   <Footer /></div>} />
-      
+
         {/* Main Pages */}
         <Route path="/" element={<div><Navigation /> <Home /> <Footer /></div>} />
         <Route path="/login" element={<div><Navigation /><Login /> <Footer /></div>} />
         <Route path="/OperationDashboard" element={<OperationDashboard />} />
+        <Route path="/CustomerDashboard" element={<CustomerDashboard />} /> 
 
         <Route path="/manager" element={<ManagerDashboard />}>
           <Route path="dashboard" element={<DashboardOverview />}/>
@@ -50,22 +54,23 @@ const App = () => {
           <Route path="Add-customer" element={<AddCustomer />} />
           <Route path="calibrationUser" element={<CalibrationUser />} />
           <Route path="maintenanceUser" element={<MaintenanceUser />} />
-
-          {/* <Route path="orders" element={<Orders />} />  
-          <Route path="settings" element={<Settings />} /> */}
+          <Route path="orderList" element={<OrderList />} />
         </Route>
-    <Route path="/admindashboard" element={<AdminDashboard />}>
-        <Route path="dashboard" element={<AdminOverview/>} />
-        <Route path="registerOil" element={<OilTypeForm />} />
-        <Route path="registerStation" element={<StationRegistrationForm />} />
-        <Route path="users" element={<UserManagement />} />
-        <Route path="stations" element={<StationManagement />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="oils" element={<OilManagementTable />} />
-        <Route path="add-calibration" element={<Calibration />} />        
-        <Route path="calibration" element={<CalibrationList />} />
-        <Route path="maintanenceList" element={<MaintanenceList />} />
-    </Route>
+        <Route path="/admindashboard" element={<AdminDashboard />}>
+          <Route path="dashboard" element={<AdminOverview/>} />
+          <Route path="registerOil" element={<OilTypeForm />} />
+          <Route path="registerStation" element={<StationRegistrationForm />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="stations" element={<StationManagement />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="oils" element={<OilManagementTable />} />
+          <Route path="add-calibration" element={<Calibration />} />        
+          <Route path="calibration" element={<CalibrationList />} />
+          <Route path="customerList" element={<CustomerList />} />
+          <Route path="supportList" element={<SupportList />} />
+          <Route path="maintanenceList" element={<MaintanenceList />} />
+          <Route path="orderManagement" element={<OrderManagement />} />
+        </Route>
 
       </Routes>
     </Router>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const SignUp = () => {
@@ -49,7 +49,7 @@ const SignUp = () => {
       if (!response.ok) throw new Error(data.message || 'Registration failed');
 
       Swal.fire('Success', 'Thank you for Registering Employee!!', 'success').then(() => {
-        navigate('/admindashboard/users'); // Redirect to calibration list or desired page
+        navigate('/admindashboard/users');
       });
     } catch (err) {
       Swal.fire('Error!', err.message || 'Something went wrong', 'error');

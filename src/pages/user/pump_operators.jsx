@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 const PumpOperatorPage = () => {
   const [pumpOperators, setPumpOperators] = useState([]); 
   const [loading, setLoading] = useState(true); 
-  const userStationId = JSON.parse(localStorage.getItem('user')).station; 
+  const userStationId = localStorage.getItem('station'); 
 
   useEffect(() => {
     const fetchPumpOperators = async () => {
@@ -15,9 +15,10 @@ const PumpOperatorPage = () => {
         const response = await fetch(`${API_URL}/users/`);
         const data = await response.json();
         
+        console.log("Station id", userStationId)
         // Filter pump operators by station
         const filteredData = data
-          .filter(operator => operator.role === 'Pumpster' && operator.station.id === userStationId)
+          .filter(operator => operator.role === 'Pumpster' && operator.station == userStationId)
           .map(operator => ({
             name: operator.name,
             phone_number: operator.phone_number,

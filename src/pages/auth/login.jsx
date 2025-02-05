@@ -43,13 +43,15 @@ const LoginPage = () => {
         localStorage.setItem("user", JSON.stringify(data));
         localStorage.setItem('user_id', data.user.id);
         localStorage.setItem('station', data.user.station);
-        Swal.fire('Success', 'Logged in successfully!', 'success').then(() => {
+        Swal.fire('Success', 'Thank you for logging in to our platform!', 'success').then(() => {
           if (role === 'admin') {
             navigate('/admindashboard/dashboard'); 
           } else if (role === 'Manager') {
             navigate('/manager/dashboard'); 
           }else if (role === 'Pumpster') {
               navigate('/operationDashboard');
+          }else if (role === 'Customer') {
+              navigate('/CustomerDashboard');    
           } else {
             navigate('/login');
           }

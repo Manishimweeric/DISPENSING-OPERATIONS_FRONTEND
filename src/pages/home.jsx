@@ -1,10 +1,72 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Menu, X } from 'lucide-react';
-
-
+import Swal from 'sweetalert2';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    Phone: '',
+    message: '',
+    email: '',
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const { name, Phone, message, email } = formData;
+    if (!name || !Phone || !message || !email) {
+      Swal.fire('Error', 'All fields are required', 'error');
+      return;
+    }
+  
+    try {
+      // Prepare the payload
+      const payload = {
+        name,
+        Phone,
+        email,
+        message,
+      };
+  
+      // Send data to API
+      const response = await fetch(`${API_URL}/api/support/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        Swal.fire('Success', 'Thank you for giving us your support or Question!', 'success').then(() => {
+          // ✅ Reset the form after submission
+          setFormData({
+            name: '',
+            Phone: '',
+            email: '',
+            message: '',
+          });
+        });
+      } else {
+        Swal.fire('Error', data.detail || 'Unable to give us your idea', 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+    }
+  };  
+  
+
+
 
   return (
     <div className="min-h-screen flex flex-col mt-20">
@@ -121,30 +183,40 @@ const App = () => {
                   </div>
                 </div>
               </div>
-              <form className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <input
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <input
                     type="text"
-                    placeholder="First Name"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Full Name"
                     className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
-                  />
-                </div>
+                />
+
                 <input
                   type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email"
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                 />
                 <input
-                  type="tel"
+                  type="text"
+                  id="Phone"
+                  name="Phone"
+                  value={formData.Phone}
+                  onChange={handleChange}
                   placeholder="Phone Number"
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all"
                 />
                 <textarea
+                  id="message"
+                 name="message"
+                 value={formData.message}
+                 onChange={handleChange}
                   placeholder="Your Message..."
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all h-32 resize-none"
                 />

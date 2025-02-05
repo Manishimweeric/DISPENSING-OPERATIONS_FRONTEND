@@ -31,14 +31,10 @@ const CustomerRegistrationForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form's default submission behavior
+    e.preventDefault();
   
     const user_id = localStorage.getItem("user_id");
-  
-    // Destructure formData
     const { name, phoneNumber, location,email } = formData;
-  
-    // Check if required fields are filled
     if (!name || !phoneNumber || !location || !email) {
       Swal.fire('Error', 'All fields are required', 'error');
       return;
@@ -53,8 +49,15 @@ const CustomerRegistrationForm = () => {
         user: user_id,
         quantity:0,
         email: email
-      };
-  
+      };  
+      const Userpayload = {
+        name,
+        phone_number: phoneNumber,
+        email: email,
+        role : "Customer",
+        password: Math.random().toString(36).substr(2, 10)
+      }; 
+      //Add customer 
       const response = await fetch(`${API_URL}/api/customers/`, {
         method: 'POST',
         headers: {
@@ -62,13 +65,27 @@ const CustomerRegistrationForm = () => {
         },
         body: JSON.stringify(payload),
       });
-  
+      //Add user Account 
+      const Userresponse = await fetch(`${API_URL}/api/users/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Userpayload),
+      });
+      //Send Email with password 
+      const Passwordresponse = await fetch(`${API_URL}/api/send-password-email/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: Userpayload.email , password:Userpayload.password }),
+      });
+
       const data = await response.json();
   
       if (response.ok) {
         Swal.fire('Success', 'Customer registered successfully!', 'success').then(() => {
           navigate('/manager/customers');
-        });
+        }); 
       } else {
         Swal.fire('Error', data.detail || 'Unable to register customer', 'error');
       }
@@ -116,7 +133,7 @@ const CustomerRegistrationForm = () => {
             <input
               id="email"
               type="email"
-              name="EMAIL"
+              name="email"
               value={formData.email}
               onChange={handleChange}
               className="block w-full mt-1 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"

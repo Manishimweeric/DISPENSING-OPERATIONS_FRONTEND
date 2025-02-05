@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { MdPrint, MdFileDownload } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { MdAdd } from 'react-icons/md';
-import { Plus, X } from 'lucide-react';
 import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 
@@ -10,7 +9,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const InventoryManagement = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const [customers, setCustomers] = useState([]); // State to store customers data
   const [oilTypes, setOilTypes] = useState([]); // State to store oil types
   const [loading, setLoading] = useState(true); // Loading state
@@ -19,13 +17,16 @@ const InventoryManagement = () => {
   const [searchOilType, setSearchOilType] = useState(''); // Search by oil type
   const [customerDetails, setCustomerDetails] = useState('');
   const [showDetails, setShowDetails] = useState(false); // This will control the table visibility
+  const [showResponseDetails, setShowResponseDetails] = useState(false);
+  const [ResponseDetails, setResponseDetails] = useState('')
+
 
   const getOilTypeName = (oilTypeId) => {
     const oilType = oilTypes.find((type) => type.id === parseInt(oilTypeId));
     return oilType ? oilType.name : 'Unknown';
   };
 
-  
+
   const fetchData = async () => {
     const user_id = parseInt(localStorage.getItem('user_id'));
     try {
@@ -94,6 +95,34 @@ const InventoryManagement = () => {
     setShowDetails(false); // Close the modal
   };
 
+  const handleCloseResponseModal = () => {
+    setShowResponseDetails(false); // Close the modal
+  };
+
+  const handleResponse = async (email) => {
+    try {
+      const detailResponse = await fetch(`${API_URL}/customer-responses/${email}/`, {
+        method: 'GET',
+      });
+
+      if (!detailResponse.ok) {
+
+        await Swal.fire({
+          icon: "info",
+          title: "Information",
+          text: `Currently, there are no responses to display. Please check back later.`,
+          confirmButtonText: "Wait",
+        });
+      }
+      const detailData = await detailResponse.json();
+      setResponseDetails(detailData);
+      setShowResponseDetails(true);
+      console.log("Fetched ResponseDetails:", ResponseDetails);
+    } catch (error) {
+      console.error('Error fetching customer details:', error);
+    }
+  };
+
   // Print Functionality
   const handlePrint = () => {
     window.print();
@@ -111,12 +140,9 @@ const InventoryManagement = () => {
 
       const detailData = await detailResponse.json();
       setCustomerDetails(detailData);
-      setShowDetails(true); 
-
-      // Do something with the customer details, like updating state or rendering them in your UI
+      setShowDetails(true);
     } catch (error) {
       console.error('Error fetching customer details:', error);
-      // Handle the error appropriately, maybe show an alert or message to the user
     }
   };
 
@@ -130,21 +156,21 @@ const InventoryManagement = () => {
         confirmButtonText: "Yes, apply discount",
         cancelButtonText: "No, cancel",
       });
-  
+
       if (!confirmation.isConfirmed) {
         return; // Exit if user cancels
       }
-  
+
       if (!customer || typeof customer.quantity === "undefined") {
         throw new Error("Invalid customer data");
       }
-  
+
       const currentQuantity = parseInt(customer.quantity, 10);
       if (isNaN(currentQuantity)) {
         throw new Error("Invalid quantity value");
       }
-  
-      const updatedQuantity = Math.max(currentQuantity - 10000, 0); // Prevent negative quantity
+
+      const updatedQuantity = Math.max(currentQuantity - 10000, 0);
 
 
       const response = await fetch(`${API_URL}/send-email/`, {
@@ -152,10 +178,8 @@ const InventoryManagement = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: customer.email }), // Set recipient email
+        body: JSON.stringify({ email: customer.email }),
       });
-
-  
       const updateResponse = await fetch(`${API_URL}/customersdata/${customer.id}/`, {
         method: "PUT",
         headers: {
@@ -167,26 +191,26 @@ const InventoryManagement = () => {
           status: "2",
         }),
       });
-  
+
       if (!updateResponse.ok) {
         const errorMessage = await updateResponse.text();
         throw new Error(`Failed to update: ${errorMessage}`);
       }
-  
+
       await Swal.fire({
         icon: "success",
         title: "Customer Updated",
         text: `Thank you for adding a discount to ${customer.name}! Your remaining quantity is now ${updatedQuantity} Ltr.`,
         confirmButtonText: "OK",
       });
-  
+
       if (typeof fetchData === "function") {
         fetchData(); // Refresh data after update
       }
-  
+
     } catch (error) {
       console.error("Error:", error.message);
-  
+
       await Swal.fire({
         icon: "error",
         title: "Error",
@@ -195,7 +219,7 @@ const InventoryManagement = () => {
       });
     }
   };
-  
+
 
   // Download PDF Functionality
   const handleDownloadPDF = () => {
@@ -278,10 +302,7 @@ const InventoryManagement = () => {
                     Phone Number
                   </th>
                   <th className="px-6 py-3  text-sm font-medium text-gray-500 cursor-pointer" onClick={() => handleSort('plate_number')}>
-                    Location
-                  </th>
-                  <th className="px-6 py-3  text-sm font-medium text-gray-500 cursor-pointer" onClick={() => handleSort('date')}>
-                    Date
+                    Email
                   </th>
                   <th className="px-6 py-3  text-sm font-medium text-gray-500">
                     Actions
@@ -295,10 +316,7 @@ const InventoryManagement = () => {
                     <td className="px-6 py-4 text-sm text-gray-900">{customer.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{customer.quantity || 0} ltr</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{customer.Phonenumber}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{customer.location}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(customer.created_at).toLocaleDateString()}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{customer.email}</td>
                     <td className="px-6 py-4 text-sm text-gray-900 space-x-2">
                       <button
                         onClick={() => handleViewDetail(customer.id)}
@@ -313,18 +331,64 @@ const InventoryManagement = () => {
                       >
                         Add Discount
                       </button>
+                      <button
+                        onClick={() => handleResponse(customer.email)}
+                        className="px-4 py-2 text-white bg-yellow-700 rounded-md hover:bgyellow-700"
+                      >
+                        View Response
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-
-
         </div>
-
-        
       </div>
+
+
+      {showResponseDetails && ResponseDetails.length > 0 && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ease-in-out">
+          <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-2xl transform transition-transform duration-300 ease-in-out">
+            <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center">Your Submitted Responses</h2>
+
+            {ResponseDetails.length > 0 ? (
+              ResponseDetails.map((response, index) => (
+                <div key={index} className="mb-6 pb-6 border-b last:border-b-0">
+                  <div className="text-lg font-medium text-gray-800">
+                    <strong>Email:</strong>
+                    <span className="text-gray-600 ml-2">{response.email}</span>
+                  </div>
+                  <div className="text-lg mt-2 text-gray-800">
+                    <strong>Message:</strong>
+                    <p className="text-gray-600">{response.message}</p>
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    <strong>Submitted on:</strong>
+                    <span className="ml-2">{new Date(response.created_at).toLocaleString()}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-600 p-8">
+                <p className="text-xl font-semibold">No Responses Available</p>
+                <p className="mt-2">Currently, there are no responses to display. Please check back later.</p>
+              </div>
+            )}
+
+
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => handleCloseResponseModal(false)}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out shadow-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {showDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -347,38 +411,44 @@ const InventoryManagement = () => {
                     <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">Quantity</th>
                     <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">Plate Number</th>
                     <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">Payment Method</th>
-                    <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">Oil Type</th>
-                    <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">Status</th>
                     <th className="py-2 px-4 border-b text-sm font-medium text-gray-600">File</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {customerDetails.map((detail, index) => (
-                    <tr key={detail.id}>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{index + 1}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.Customer}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.quantity}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.plate_number}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.Method}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.oil_type}</td>
-                      <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.status}</td>
+                  {customerDetails.length > 0 ? (
+                    customerDetails.map((detail, index) => (
+                      <tr key={detail.id}>
+                        <td className="py-2 px-4 border-b text-sm text-gray-700">{index + 1}</td>
+                        <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.Customer}</td>
+                        <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.quantity}</td>
+                        <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.plate_number}</td>
+                        <td className="py-2 px-4 border-b text-sm text-gray-700">{detail.Method}</td>
                         <td className="py-2 px-4 border-b text-sm text-gray-700">
                           {detail.file ? (
-                            <a
-                              href={`${API_URL}${detail.file}`} // Ensure the correct full URL
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800"
-                              download={detail.file.split('/').pop()} // Extract filename for download
-                            >
-                              View File
-                            </a>
+                            <>
+                              <a
+                                href={`${API_URL}/media/uploads/${detail.file.split('/').pop()}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800"
+                                download={detail.file.split('/').pop()} // Extracting file name for download
+                              >
+                                Payment File {/* Displaying the file name */}
+                              </a>
+                            </>
                           ) : (
                             'No file uploaded'
                           )}
                         </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="py-4 px-4 text-center text-red-500">
+                        No customer details available
+                      </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

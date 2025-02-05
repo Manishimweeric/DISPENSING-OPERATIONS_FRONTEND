@@ -16,6 +16,7 @@ const DashboardPage = () => {
   const [chartData, setChartData] = useState([]);
   const [pumpsters, setPumpsters] = useState([]);
   const [loading, setLoading] = useState(false);
+  const userStationId = localStorage.getItem('station'); 
 
   useEffect(() => {
     const fetchSummaryData = async () => {
@@ -37,7 +38,7 @@ const DashboardPage = () => {
         const stocksData = await stocksResponse.json();
 
         const totalCustomers = customersData.length;
-        const totalPumpsters = usersData.filter((user) => user.role === 'Pumpster').length;
+        const totalPumpsters = usersData.filter((user) => user.role === 'Pumpster' && user.station == userStationId ).length;
         const totalInventory = stocksData.length;
 
         setChartData([
@@ -46,7 +47,7 @@ const DashboardPage = () => {
           { name: 'Inventory', count: totalInventory },
         ]);
 
-        setPumpsters(usersData.filter((user) => user.role === 'Pumpster'));
+        setPumpsters(usersData.filter((user) => user.role === 'Pumpster' && user.station == userStationId ));
       } catch (error) {
         console.error('Error fetching data:', error);
         Swal.fire('Error', 'Failed to load summary data', 'error');
@@ -64,14 +65,25 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="w-full h-full px-6 py-4">
+    <div className="w-full h-full px-1 py-5">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Dashboard Overview</h2>
 
-        {/* Flex Grid for Bar Chart and Pumpsters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Cards */}
+          {['Customers', 'Pumpsters', 'Inventory'].map((category, idx) => (
+            <div key={idx} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+              <div className="text-center mb-4">
+                <span className="text-2xl font-bold text-gray-700">{category}</span>
+              </div>
+              <p className="text-lg font-semibold text-center text-gray-800">
+                {category === 'Customers' ? chartData[0].count : category === 'Pumpsters' ? chartData[1].count : chartData[2].count}
+              </p>
+              <p className="text-center text-gray-600 mt-2">{category}Count</p>
+            </div>
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-          {/* Bar Chart Section */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-4 text-center text-gray-800">
               Total Numbers of Customers, Pumpsters, and Inventory
@@ -118,23 +130,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Summary Stats (Hello Cards Section) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Cards */}
-          {['Customers', 'Pumpsters', 'Inventory'].map((category, idx) => (
-            <div
-              key={idx}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="text-center mb-4">
-                <span className="text-4xl font-bold text-gray-700">{category}</span>
-              </div>
-              <p className="text-lg font-semibold text-center text-gray-800">
-                {category === 'Customers' ? chartData[0].count : category === 'Pumpsters' ? chartData[1].count : chartData[2].count}
-              </p>
-              <p className="text-center text-gray-600 mt-2">{category} Count</p>
-            </div>
-          ))}
-        </div>
+        
       </div>
     </div>
   );
