@@ -216,10 +216,15 @@ const CalibrationList = () => {
                                         </button>
                                         <button
                                             onClick={() => handleMaintenance(calibration)}
-                                            className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
-                                        >
-                                            Maintenance
-                                        </button>
+                                                className={`py-1 px-3 rounded text-white ${
+                                                    calibration.report 
+                                                        ? 'bg-yellow-500 hover:bg-yellow-600' 
+                                                        : 'bg-gray-400 cursor-not-allowed'
+                                                }`}
+                                                disabled={!calibration.report}
+                                            >
+                                                Maintenance
+                                            </button>
                                     </td>
                                 </tr>
                             ))}
@@ -300,6 +305,7 @@ const CalibrationList = () => {
                                     value={maintenanceDate}
                                     onChange={handleDateChanges}
                                     className="mt-2 block w-full px-4 py-1 border border-gray-300 rounded-md"
+                                    min={new Date().toISOString().split("T")[0]} // Prevent past dates
                                     required
                                 />
                             </div>

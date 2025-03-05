@@ -170,13 +170,13 @@ const InventoryManagement = () => {
         throw new Error("Invalid quantity value");
       }
 
-      const updatedQuantity = Math.max(currentQuantity - 10000, 0);
+      const updatedQuantity = Math.max(currentQuantity - 1000, 0);
 
 
       const response = await fetch(`${API_URL}/send-email/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", 
         },
         body: JSON.stringify({ email: customer.email }),
       });
@@ -326,8 +326,8 @@ const InventoryManagement = () => {
                       </button>
                       <button
                         onClick={() => handleAddDiscount(customer)}
-                        className={`px-4 py-2 text-white rounded-md  ${customer.quantity >= 10000 ? 'bg-green-500 rounded-md hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}`}
-                        disabled={customer.quantity < 10000}
+                        className={`px-4 py-2 text-white rounded-md  ${customer.quantity >= 1000 ? 'bg-green-500 rounded-md hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}`}
+                        disabled={customer.quantity < 1000}
                       >
                         Add Discount
                       </button>

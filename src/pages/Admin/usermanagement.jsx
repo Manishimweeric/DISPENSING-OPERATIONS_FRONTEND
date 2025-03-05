@@ -22,7 +22,7 @@ const UserManagementTable = () => {
       if (response.ok) {
         const data = await response.json();
         // Filter out users with the role 'Admin'
-        const filteredUsers = data.filter(user => user.role !== 'admin');
+        const filteredUsers = data.filter(user => user.role !== 'admin' && user.role !== 'Customer');
         setUsers(filteredUsers);
       } else {
         Swal.fire('Error', 'Failed to fetch users', 'error');

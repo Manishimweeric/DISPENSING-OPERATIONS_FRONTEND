@@ -32,7 +32,7 @@ const HomeApp = () => {
         showToast("Tank is nearly full!", "info");
       } else if (data.level < 10) {
         showToast("Tank is almost empty!", "warning");
-      } else if (data.level === 20 && !orderCreated) {
+      } else if (data.level < 30 && !orderCreated) {
         createOrder();  // Call order creation when level is 30%
       }
     });
@@ -53,20 +53,13 @@ const HomeApp = () => {
         name: "Auto Generated Order",
         oil_type: "Diesel",
         station: userStationId, 
-        email: useremail,
+        email: "iradukundajatuja@gmail.com",
       };
 
       const response = await axios.post(API_URL, orderData, {
         headers: { "Content-Type": "application/json" },
       });
 
-      const Orderresponse = await fetch(`${API_URL}/send-Order/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: useremail }),
-      });
 
 
       if (response.status === 201) {
@@ -90,7 +83,7 @@ const HomeApp = () => {
           width="500px"
           height="350px"
           font-size="10px"
-          data={[["Label", "Value"], ["Water Level", level]]}
+          data={[["Label", "Value"], ["Fuel Level", level]]}
           options={{
             width: 600,
             height: 350,

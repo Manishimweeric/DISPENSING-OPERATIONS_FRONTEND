@@ -109,10 +109,12 @@ const StationRegistrationForm = () => {
               id="Date"
               value={formData.Date}
               onChange={handleChange}
+              min={new Date().toISOString().split("T")[0]} 
               className="block w-full mt-1 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500"
               required
             />
-          </div>
+          </div>      
+
 
           <div className="mb-4 md:mb-6">
             <label className="block text-sm font-medium text-gray-700" htmlFor="Time">

@@ -62,7 +62,7 @@ const CustomerRegistrationForm = () => {
 
       if (response.ok) {
         Swal.fire("Success", "Thank you for your response!", "success").then(() => {
-          setFormData({ ...formData, message: "" }); // Clear form after submission
+          setFormData({ ...formData, message: "" });
         });
       } else {
         Swal.fire("Error", "Unable to send response", "error");
